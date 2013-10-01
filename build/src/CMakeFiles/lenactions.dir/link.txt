@@ -1,0 +1,1 @@
+/usr/bin/c++    -std=c++11 -o3    CMakeFiles/lenactions.dir/lib/utils.cc.o CMakeFiles/lenactions.dir/lib/pixel.cc.o CMakeFiles/lenactions.dir/lib/convolution.cc.o CMakeFiles/lenactions.dir/lib/image.cc.o CMakeFiles/lenactions.dir/app/main.cc.o  -o lenactions -rdynamic 

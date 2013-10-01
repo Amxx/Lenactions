@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/image.hh
+utils.hh
+../include/utils.hh
+pixel.hh
+../include/pixel.hh
+
+../include/pixel.hh
+iostream
+-
+cmath
+-
+typedef.hh
+../include/typedef.hh
+
+../include/typedef.hh
+
+../include/utils.hh
+iostream
+-
+fstream
+-
+
+/home/amxx/M2/commun/Aquisition/code/lenactions/src/app/main.cc
+iostream
+-
+fstream
+-
+cstdio
+-
+cstdlib
+-
+pixel.hh
+/home/amxx/M2/commun/Aquisition/code/lenactions/src/app/pixel.hh
+image.hh
+/home/amxx/M2/commun/Aquisition/code/lenactions/src/app/image.hh
+
