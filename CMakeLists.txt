@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 
 project(lenactions)
-set(imamxx_MAJOR_VERSION 0)
-set(imamxx_MINOR_VERSION 1)
-set(imamxx_REVISION_VERSION 0)
+set(lenactions_MAJOR_VERSION 0)
+set(lenactions_MINOR_VERSION 1)
+set(lenactions_REVISION_VERSION 0)
 
 #-------------- PLATFORM SPECIFIC COMPILATION FLAGS -----------------------
 # Requires CMake >= 2.4.7

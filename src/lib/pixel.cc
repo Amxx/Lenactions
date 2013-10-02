@@ -274,3 +274,26 @@ void pixel::to_stream(std::ostream& out, format out_format)
     
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pixel pixel::quadratic(pixel& pi, pixel& pj)
+{
+	float r = sqrt(pi.get_canal(R)*pi.get_canal(R) + pj.get_canal(R)*pj.get_canal(R));
+	float g = sqrt(pi.get_canal(G)*pi.get_canal(G) + pj.get_canal(G)*pj.get_canal(G));
+	float b = sqrt(pi.get_canal(B)*pi.get_canal(B) + pj.get_canal(B)*pj.get_canal(B));
+	return pixel(r, g, b, RGB);
+}
+

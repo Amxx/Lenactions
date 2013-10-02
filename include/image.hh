@@ -27,19 +27,21 @@
 namespace lenactions {
   
   class image {
-    
+
+		
     public:
       image();
-      image(image& cpy);
+			image(const image& cpy);
       image(std::istream& in);
-      ~image();
-      
-      std::pair<int,int> dimensions();
-		
-      void from_stream(std::istream& in);
+      ~image();		
+			
+			void from_stream(std::istream& in);
       void to_stream(std::ostream& out, format out_format);
 		
-      image compose(convolution c);
+			std::pair<int,int> dimensions();
+		
+		
+		
 		
 		
       // void histogram(std::ostream& out);
@@ -55,6 +57,9 @@ namespace lenactions {
           
       // void connected(int adj = 0);
       
+      image compose(convolution c);
+			static image assemblage(image& a, image& b, pixelOperator op);
+			
 			
     private:
       int o_cols(int j, int offset);

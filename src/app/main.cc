@@ -25,6 +25,28 @@ int main(int argc, char* argv[])
   img.from_stream(in);
   in.close();
   
+	
+	
+	/*
+	out.open("/dev/shm/out_sobel_h.ppm");
+  img.compose(lenactions::convolution::SobelH()).to_stream(out, lenactions::P6);
+  out.close();
+  
+	out.open("/dev/shm/out_sobel_v.ppm");
+  img.compose(lenactions::convolution::SobelV()).to_stream(out, lenactions::P6);
+  out.close();
+	*/
+		
+	lenactions::image sobelh = img.compose(lenactions::convolution::SobelH());
+	lenactions::image sobelv = img.compose(lenactions::convolution::SobelV());
+	
+	out.open("/dev/shm/out_sobel.ppm");	
+	lenactions::pixelOperator op = lenactions::pixel::quadratic;
+	lenactions::image::assemblage(sobelh, sobelv, op).to_stream(out, lenactions::P6);
+	out.close();
+	
+	
+	
   /*
   img.gamma(2.);
   

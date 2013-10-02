@@ -39,17 +39,21 @@ namespace lenactions {
       void          set_canal(canal c, float v);
       void          set_space(colorSpace s);
     
-      //void          inv();
-      //void          rotate(vByte a);
-    
     	void          to_stream(std::ostream& o, format f);
-
+			
+		
+			static pixel	quadratic(pixel& pi, pixel& pj);
+			
+			
     private:
       colorSpace    space;
       float         value[3];    
     
 	};
-  
+
+	typedef pixel(*pixelOperator)(pixel&, pixel&);
 };
+
+
 
 #endif //PIXEL_H

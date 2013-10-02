@@ -32,7 +32,7 @@ image::image() :
 {
 }
 
-image::image(image& cpy) :
+image::image(const image& cpy) :
 	rows(cpy.rows),
 	cols(cpy.cols)
 {
@@ -151,6 +151,18 @@ void image::to_stream(std::ostream& out, format out_format)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 image image::compose(convolution c)
 {
 	image composed;
@@ -175,21 +187,26 @@ image image::compose(convolution c)
       composed.bitmap[i*cols+j].set_canal(G, g/c.norm);
       composed.bitmap[i*cols+j].set_canal(B, b/c.norm);
     }
-		
   return composed;
 }
 
 
 
-
-
-
-
-
-
-
-
-
+image image::assemblage(image& a, image& b, pixelOperator op)
+{
+	if (a.cols != b.cols || a.rows != b.rows) throw;
+	
+	image assembled;
+	assembled.cols = 		a.cols;
+	assembled.rows = 		a.rows;
+	assembled.bitmap =	new pixel[a.rows*a.cols];
+	
+	for (int i = 0; i < a.rows; ++i)
+		for (int j = 0; j < a.cols; ++j)
+			assembled.bitmap[i*a.cols+j] = op(a.bitmap[i*a.cols+j], b.bitmap[i*a.cols+j]);
+	return assembled;
+}
+			
 
 
 
