@@ -151,6 +151,35 @@ void image::to_stream(std::ostream& out, format out_format)
 
 
 
+image image::compose(convolution c)
+{
+	image composed;
+	composed.cols = 	cols;
+	composed.rows = 	rows;
+	composed.bitmap = new pixel[rows*cols];
+	
+  for (int i = 0; i < rows; ++i)
+		for (int j = 0; j < cols; ++j)
+    {  
+      float r = 0;
+      float g = 0;
+      float b = 0;
+      for (int k = 0; k < 3; ++k)
+        for (int l = 0; l < 3; ++l)
+        {
+          r += c.val[3*k+l]*bitmap[o_rows(i,k-1)*cols+o_cols(j,l-1)].get_canal(R);
+          g += c.val[3*k+l]*bitmap[o_rows(i,k-1)*cols+o_cols(j,l-1)].get_canal(G);
+          b += c.val[3*k+l]*bitmap[o_rows(i,k-1)*cols+o_cols(j,l-1)].get_canal(B);
+        }
+      composed.bitmap[i*cols+j].set_canal(R, r/c.norm);
+      composed.bitmap[i*cols+j].set_canal(G, g/c.norm);
+      composed.bitmap[i*cols+j].set_canal(B, b/c.norm);
+    }
+		
+  return composed;
+}
+
+
 
 
 
@@ -186,31 +215,3 @@ int image::o_rows(int i, int offset) {
   return r;
 }
 
-
-image image::compose(convolution c)
-{
-	image composed;
-	composed.cols = 	this->cols;
-	composed.rows = 	this->rows;
-	composed.bitmap = new pixel[rows*cols];
-	
-  for (int i = 0; i < this->rows; ++i)
-		for (int j = 0; j < this->cols; ++j)
-    {  
-      float r = 0;
-      float g = 0;
-      float b = 0;      
-      for (int k = 0; k < 3; ++k)
-        for (int l = 0; l < 3; ++l)
-        {
-          r += c.val[3*k+l]*bitmap[o_rows(i,k-1)*cols+o_cols(j,l-1)].get_canal(R);
-          g += c.val[3*k+l]*bitmap[o_rows(i,k-1)*cols+o_cols(j,l-1)].get_canal(G);
-          b += c.val[3*k+l]*bitmap[o_rows(i,k-1)*cols+o_cols(j,l-1)].get_canal(B);
-        }
-      composed.bitmap[i*cols+j].set_canal(R, r/c.norm);
-      composed.bitmap[i*cols+j].set_canal(G, g/c.norm);
-      composed.bitmap[i*cols+j].set_canal(B, b/c.norm);
-    }
-		
-  return composed;
-}
