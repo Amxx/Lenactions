@@ -154,42 +154,63 @@ void image::to_stream(std::ostream& out, format out_format)
 
 
 
-/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 int image::o_cols(int j, int offset) {
   int r = j+offset;
   while (r < 0 || r >= cols)
-    r = (r < 0)?-r:2*(cols-1)-r;
+    r = (r < 0)?(-r):(2*(cols-1)-r);
   return r;
 }
 
 int image::o_rows(int i, int offset) {
   int r = i+offset;
   while (r < 0 || r >= rows)
-    r = (r < 0)?-r:2*(rows-1)-r;
+    r = (r < 0)?(-r):(2*(rows-1)-r);
   return r;
 }
-*/
-/*
-pixel* image::compose(convolution c)
+
+
+image image::compose(convolution c)
 {
-	pixel* new_bitmap = new pixel[rows*cols];
-  for (int i = 0; i < rows; ++i)
-		for (int j = 0; j < cols; ++j)
+	image composed;
+	composed.cols = 	this->cols;
+	composed.rows = 	this->rows;
+	composed.bitmap = new pixel[rows*cols];
+	
+  for (int i = 0; i < this->rows; ++i)
+		for (int j = 0; j < this->cols; ++j)
     {  
       float r = 0;
       float g = 0;
       float b = 0;      
-      for (int k = 0; k < c.size; ++k)
-        for (int l = 0; l < c.size; ++l)
+      for (int k = 0; k < 3; ++k)
+        for (int l = 0; l < 3; ++l)
         {
-          r += c.value[k*c.size+l]*bitmap[o_rows(i,k-c.offset)*cols+o_cols(j,l-c.offset)].get_canal(R);
-          g += c.value[k*c.size+l]*bitmap[o_rows(i,k-c.offset)*cols+o_cols(j,l-c.offset)].get_canal(G);
-          b += c.value[k*c.size+l]*bitmap[o_rows(i,k-c.offset)*cols+o_cols(j,l-c.offset)].get_canal(B);
+          r += c.val[3*k+l]*bitmap[o_rows(i,k-1)*cols+o_cols(j,l-1)].get_canal(R);
+          g += c.val[3*k+l]*bitmap[o_rows(i,k-1)*cols+o_cols(j,l-1)].get_canal(G);
+          b += c.val[3*k+l]*bitmap[o_rows(i,k-1)*cols+o_cols(j,l-1)].get_canal(B);
         }
-      new_bitmap[i*cols+j].set_canal(R, r/c.norm);
-      new_bitmap[i*cols+j].set_canal(G, g/c.norm);
-      new_bitmap[i*cols+j].set_canal(B, b/c.norm);
+      composed.bitmap[i*cols+j].set_canal(R, r/c.norm);
+      composed.bitmap[i*cols+j].set_canal(G, g/c.norm);
+      composed.bitmap[i*cols+j].set_canal(B, b/c.norm);
     }
-  return new_bitmap;
+		
+  return composed;
 }
-*/

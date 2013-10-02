@@ -22,6 +22,7 @@
 
 #include "utils.hh"
 #include "pixel.hh"
+#include "convolution.hh"
 
 namespace lenactions {
   
@@ -37,7 +38,10 @@ namespace lenactions {
 		
       void from_stream(std::istream& in);
       void to_stream(std::ostream& out, format out_format);
-      
+		
+      image compose(convolution c);
+		
+		
       // void histogram(std::ostream& out);
       // void inv();
       // void rotate(vByte angle);
@@ -51,11 +55,12 @@ namespace lenactions {
           
       // void connected(int adj = 0);
       
+			
     private:
-      // int o_cols(int j, int offset);
-      // int o_rows(int i, int offset);
-      // pixel* compose(convolution c);
+      int o_cols(int j, int offset);
+      int o_rows(int i, int offset);
 
+		
       int rows;
       int cols;
       pixel* bitmap;	

@@ -1,5 +1,5 @@
 /*\
-* ImAMXX
+* lenactions
 * A simple image editing library
 * Copyrigth 2013 - Hadrien Croubois
 *
@@ -17,23 +17,59 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-/*
 #include "convolution.hh"
 
-using namespace ImAMXX;
 
-convolution::convolution(vByte* v, int s, int o, vByte n) :
-  size(s),
-  offset(o),
-  norm(n)
+
+using namespace lenactions;
+
+convolution::convolution(float v[9], float n) : norm(n)
 {
-  value = new vByte[s * s];
-  for (int i = 0; i < s * s; ++i)
-    value[i] = v[i];
+  for (int i = 0; i < 9; ++i)
+    val[i] = v[i];
 }
 
-convolution::~convolution()
+convolution::convolution(float v[9])
 {
-  delete [] value;
+	norm = 0;
+  for (int i = 0; i < 9; ++i)
+	{
+		if (v[i]>0)
+			norm += val[i];
+    val[i] = v[i];
+	}
 }
-*/
+
+
+
+
+convolution PrewitzH() {
+	float filtre[9] = { -1.f, -1.f, -1.f,  0.f,  0.f,  0.f,  1.f,  1.f,  1.f};
+	return convolution(filtre);
+}
+convolution PrewitzV() {
+	float filtre[9] = { -1.f,  0.f,  1.f, -1.f,  0.f,  1.f, -1.f,  0.f,  1.f};
+	return convolution(filtre);
+}
+
+convolution SobelH() {
+	float filtre[9] = { -1.f, -2.f, -1.f,  0.f,  0.f,  0.f,  1.f,  2.f,  1.f};
+	return convolution(filtre);
+}
+convolution SobelV() {
+	float filtre[9] = { -1.f,  0.f,  1.f, -2.f,  0.f,  2.f, -1.f,  0.f,  1.f};
+	return convolution(filtre);
+}
+
+convolution KirschH() {
+	float filtre[9] = { -3.f, -3.f,  5.f, -3.f,  0.f,  5.f, -3.f, -3.f,  5.f};
+	return convolution(filtre);
+}
+convolution KirschV() {
+	float filtre[9] = { -3.f, -3.f, -3.f, -3.f,  0.f, -3.f,  5.f,  5.f,  5.f};
+	return convolution(filtre);
+}
+
+
+
+
