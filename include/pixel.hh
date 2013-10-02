@@ -43,7 +43,7 @@ namespace lenactions {
 			
 		
 			static pixel	quadratic(pixel& pi, pixel& pj);
-			
+			static pixel	angleteinte(pixel&pi, pixel& pj);
 			
     private:
       colorSpace    space;

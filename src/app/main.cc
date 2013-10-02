@@ -39,12 +39,18 @@ int main(int argc, char* argv[])
 		
 	lenactions::image sobelh = img.compose(lenactions::convolution::SobelH());
 	lenactions::image sobelv = img.compose(lenactions::convolution::SobelV());
+	lenactions::pixelOperator op;
+	
 	
 	out.open("/dev/shm/out_sobel.ppm");	
-	lenactions::pixelOperator op = lenactions::pixel::quadratic;
+	op = lenactions::pixel::quadratic;
 	lenactions::image::assemblage(sobelh, sobelv, op).to_stream(out, lenactions::P6);
 	out.close();
 	
+	out.open("/dev/shm/out_sobel_angle.ppm");	
+	op = lenactions::pixel::angleteinte;
+	lenactions::image::assemblage(sobelh, sobelv, op).to_stream(out, lenactions::P6);
+	out.close();
 	
 	
   /*

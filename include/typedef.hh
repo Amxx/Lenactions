@@ -20,6 +20,8 @@
 #ifndef TYPEDEF_H
 #define TYPEDEF_H
 
+#define		PI							3.1415926535897932384626
+
 #define		MIN3(x,y,z)  		((y) <= (z) ? ((x) <= (y) ? (x) : (y)) : ((x) <= (z) ? (x) : (z)))
 #define		MAX3(x,y,z)  		((y) >= (z) ? ((x) >= (y) ? (x) : (y)) : ((x) >= (z) ? (x) : (z)))
 
