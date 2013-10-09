@@ -21,8 +21,6 @@
 
 using namespace lenactions;
 
-
-
 Unionfind::Unionfind(int f) :
 	p(this),
 	d(0),

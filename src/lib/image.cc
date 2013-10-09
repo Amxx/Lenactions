@@ -158,6 +158,26 @@ void image::to_stream(std::ostream& out, format out_format)
 
 
 
+float image::Hseuil(float p)
+{
+	int*	hist = new int[1024];
+	int 	seuil = 0;
+	int 	cumul = 0;
+	
+	for (int i=0; i<1024; ++i)
+		hist[i] = 0;
+	for (int i=0; i<rows*cols; ++i)
+		hist[(int) (1024*bitmap[i].get_canal(V))]++;
+
+	while (cumul<p*rows*cols)
+	{
+		cumul+=hist[seuil];
+		seuil++;
+	}
+	return (float) seuil/1024;
+}
+
+
 
 
 
@@ -212,27 +232,16 @@ image image::assemblage(image& a, image& b, pixelOperator op)
 
 
 
-image image::seuil_global(float s)
+image image::seuil_global(float p)
 {
 	image seuilled;
 	seuilled.cols = 	cols;
 	seuilled.rows = 	rows;
 	seuilled.bitmap =	new pixel[rows*cols];
-	
-	
-	int* hist = new int[255];
-	for (int i=0; i<255; ++i)
-		hist[i] = 0;
+	float seuil = 		Hseuil(p);
 	for (int i=0; i<rows*cols; ++i)
-		hist[(int) (255*bitmap[i].get_canal(V))]++;
-	for (int i=0; i<254; ++i)
-		hist[i+1] += hist[i];
-
-	float seuil = s*rows*cols;
-	for (int i=0; i<rows*cols; ++i)
-		if (hist[(int) (255*bitmap[i].get_canal(V))]>seuil)
+		if (bitmap[i].get_canal(V)>seuil)
 			seuilled.bitmap[i] = bitmap[i];
-	
 	return seuilled;
 }
 
@@ -241,33 +250,23 @@ image image::seuil_local()
 	float filtre[9] = { 1.f, 1.f, 1.f, 1.f, 0.f, 1.f, 1.f, 1.f, 1.f};
 	image composed = image::compose(convolution(filtre));
 	for (int i=0; i<rows*cols; ++i)
-	{
-		if (bitmap[i].get_canal(V) >= composed.bitmap[i].get_canal(V))
+		if (bitmap[i].get_canal(V) > composed.bitmap[i].get_canal(V))
 			composed.bitmap[i] = bitmap[i];
 		else
 			composed.bitmap[i].set_canal(V, 0);
-	}
 	return composed;
 }
-
-
-
-
 
 image image::seuil_histerisis(float high, float low)
 {
 	Unionfind* uf = new Unionfind[rows*cols];
-	
 	for (int i=0; i<rows; ++i)
 		for (int j=0; j<cols; ++j)
 		{
 			if (bitmap[i*cols+j].get_canal(V) > high)
-			{
 				uf[i*cols+j].flag() = 1;
-			}
-			else if (bitmap[i*cols+j].get_canal(V) > low)
+			if (bitmap[i*cols+j].get_canal(V) > low)
 			{
-
 				if (i>0      && j>0      && bitmap[(i-1) * cols + j-1].get_canal(V) > low)		uf[i*cols+j].join(uf[(i-1) * cols + j-1]);
 				if (i>0                  && bitmap[(i-1) * cols + j  ].get_canal(V) > low)		uf[i*cols+j].join(uf[(i-1) * cols + j  ]);
 				if (i>0      && j<cols-1 && bitmap[(i-1) * cols + j+1].get_canal(V) > low)		uf[i*cols+j].join(uf[(i-1) * cols + j+1]);
@@ -276,7 +275,6 @@ image image::seuil_histerisis(float high, float low)
 				if (i<rows-1             && bitmap[(i+1) * cols + j  ].get_canal(V) > low)		uf[i*cols+j].join(uf[(i+1) * cols + j  ]);
 				if (i<rows-1 && j>0      && bitmap[(i+1) * cols + j-1].get_canal(V) > low)		uf[i*cols+j].join(uf[(i+1) * cols + j-1]);
 				if (            j>0      && bitmap[i     * cols + j-1].get_canal(V) > low)		uf[i*cols+j].join(uf[i     * cols + j-1]);
-
 			}
 		}
 		
@@ -285,12 +283,10 @@ image image::seuil_histerisis(float high, float low)
 	seuilled.rows = 	rows;
 	seuilled.bitmap =	new pixel[rows*cols];
 	
-	
 	for (int i=0; i<rows*cols; ++i)
-	{
 		if (uf[i].root().flag() == 1)
 			seuilled.bitmap[i] = bitmap[i];
-	}
+	
 	return seuilled;
 }
 

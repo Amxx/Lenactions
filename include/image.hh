@@ -55,9 +55,11 @@ namespace lenactions {
           
       // void connected(int adj = 0);
       
+			
+			float Hseuil(float p);
+			
       image compose(convolution c);
 			static image assemblage(image& a, image& b, pixelOperator op);
-			
 			
 			image seuil_global(float s = 0.5);
 			image seuil_local();

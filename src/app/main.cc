@@ -26,13 +26,9 @@ int main(int argc, char* argv[])
   in.close();
   
 	
-	
-	
 	lenactions::image sobelh = img.compose(lenactions::convolution::SobelH());
 	lenactions::image sobelv = img.compose(lenactions::convolution::SobelV());
 	lenactions::pixelOperator op;
-	
-	
 	
 	/*
 	out.open("/dev/shm/out_sobel.ppm");	
@@ -60,8 +56,12 @@ int main(int argc, char* argv[])
 	sobelteinte.seuil_local().to_stream(out, lenactions::P6);
 	out.close();
 	
+	
+	float high =	sobelteinte.Hseuil(0.95);
+	float low =		sobelteinte.Hseuil(0.85);
+	
 	out.open("/dev/shm/out_sobel_teinte_seuilhisterisis.ppm");		
-	sobelteinte.seuil_histerisis(0.25, 0.1).to_stream(out, lenactions::P6);
+	sobelteinte.seuil_histerisis(high, low).to_stream(out, lenactions::P6);
 	out.close();
   
   return 0;
