@@ -7,6 +7,7 @@ set(lenactions_src
 	lib/pixel.cc
 	lib/convolution.cc
 	lib/image.cc
+	lib/unionfind.cc
   
   app/main.cc
 )

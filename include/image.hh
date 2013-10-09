@@ -17,12 +17,13 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#ifndef IMAGE_H
-#define IMAGE_H
+#ifndef IMAGE_HH
+#define IMAGE_HH
 
 #include "utils.hh"
 #include "pixel.hh"
 #include "convolution.hh"
+#include "unionfind.hh"
 
 namespace lenactions {
   
@@ -40,10 +41,7 @@ namespace lenactions {
 		
 			std::pair<int,int> dimensions();
 		
-		
-		
-		
-		
+			
       // void histogram(std::ostream& out);
       // void inv();
       // void rotate(vByte angle);
@@ -59,6 +57,11 @@ namespace lenactions {
       
       image compose(convolution c);
 			static image assemblage(image& a, image& b, pixelOperator op);
+			
+			
+			image seuil_global(float s = 0.5);
+			image seuil_local();
+			image seuil_histerisis(float high, float low);
 			
 			
     private:

@@ -28,7 +28,6 @@ char lenactions::getc(std::istream& in)
 		do if ((ch = in.get()) == -1) error("EOF / read error");
 		while (ch != '\n' && ch != '\r');
 	}
-	// return (unsigned char) ch;
 	return (char) ch;
 }
 

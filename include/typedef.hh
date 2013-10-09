@@ -17,8 +17,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#ifndef TYPEDEF_H
-#define TYPEDEF_H
+#ifndef TYPEDEF_HH
+#define TYPEDEF_HH
 
 #define		PI							3.1415926535897932384626
 

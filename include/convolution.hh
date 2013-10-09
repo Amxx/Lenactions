@@ -1,5 +1,5 @@
 /*\
-* ImAMXX
+* lenactions
 * A simple image editing library
 * Copyrigth 2013 - Hadrien Croubois
 *
@@ -17,21 +17,32 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#ifndef UTILS_HH
-#define UTILS_HH
-
-#include <iostream>
-#include <fstream>
+#ifndef CONVOLUTION_HH
+#define CONVOLUTION_HH
 
 namespace lenactions {
+	
+	class image;
+	
+	class convolution {
+		friend class image;
+		
+		public:
+			convolution(float v[9]);
+			convolution(float v[9], float n);
+		
+			static convolution PrewitzH();
+			static convolution PrewitzV();
+			static convolution SobelH();
+			static convolution SobelV();
+			static convolution KirschH();
+			static convolution KirschV();
+		
+		private:
+			float	val[9];
+			float	norm;
+	};	
+}
 
-	char getc(std::istream& in);
-	unsigned char getbit(std::istream& in);
-	unsigned char getrawbyte(std::istream& in);
-	int getint(std::istream& in);
 
-  void error(const char* str);
-  
-};
-
-#endif // UTILS_H
+#endif

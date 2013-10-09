@@ -17,8 +17,8 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#ifndef PIXEL_H
-#define PIXEL_H
+#ifndef PIXEL_HH
+#define PIXEL_HH
 
 #include <iostream>
 #include <cmath>
