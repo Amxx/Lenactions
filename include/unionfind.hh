@@ -19,20 +19,21 @@
 
 #ifndef UNIONFIND_HH
 #define UNIONFIND_HH
+namespace lenactions {
 
-class Unionfind
-{
-	public:
-		Unionfind(int f = 0);
-		Unionfind&	root();
-		int&				flag();
-		void				join(Unionfind& u);
-	private:
-		Unionfind*	p;
-		int 				d;
-		int 				f;
-};
-
+	class Unionfind
+	{
+		public:
+			Unionfind(int f = 0);
+			Unionfind&	root();
+			int&				flag();
+			void				join(Unionfind& u);
+		private:
+			Unionfind*	p;
+			int 				d;
+			int 				f;
+	};
+}
 
 
 
