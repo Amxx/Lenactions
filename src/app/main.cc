@@ -59,10 +59,17 @@ int main(int argc, char* argv[])
 	
 	float high =	sobelteinte.Hseuil(0.95);
 	float low =		sobelteinte.Hseuil(0.85);
+	lenactions::image histeresis = sobelteinte.seuil_histerisis(high, low);
 	
 	out.open("/dev/shm/out_sobel_teinte_seuilhisterisis.ppm");		
-	sobelteinte.seuil_histerisis(high, low).to_stream(out, lenactions::P6);
+	histeresis.to_stream(out, lenactions::P6);
 	out.close();
+
+	out.open("/dev/shm/out_sobel_teinte_seuilhisterisis_affinage.ppm");		
+	histeresis.affinage().affinage().to_stream(out, lenactions::P6);
+	// histeresis.compose(lenactions::convolution::Smooth()).affinage().to_stream(out, lenactions::P6);
+	out.close();
+  
   
   return 0;
 }

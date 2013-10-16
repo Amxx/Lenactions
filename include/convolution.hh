@@ -31,6 +31,7 @@ namespace lenactions {
 			convolution(float v[9]);
 			convolution(float v[9], float n);
 		
+			static convolution Smooth();
 			static convolution PrewitzH();
 			static convolution PrewitzV();
 			static convolution SobelH();

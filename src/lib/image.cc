@@ -186,8 +186,8 @@ float image::Hseuil(float p)
 image image::compose(convolution c)
 {
 	image composed;
-	composed.cols = 	cols;
 	composed.rows = 	rows;
+	composed.cols = 	cols;
 	composed.bitmap = new pixel[rows*cols];
 	
   for (int i = 0; i < rows; ++i)
@@ -215,8 +215,8 @@ image image::assemblage(image& a, image& b, pixelOperator op)
 	if (a.cols != b.cols || a.rows != b.rows) throw;
 	
 	image assembled;
-	assembled.cols = 		a.cols;
 	assembled.rows = 		a.rows;
+	assembled.cols = 		a.cols;
 	assembled.bitmap =	new pixel[a.rows*a.cols];
 	
 	for (int i = 0; i < a.rows; ++i)
@@ -235,8 +235,8 @@ image image::assemblage(image& a, image& b, pixelOperator op)
 image image::seuil_global(float p)
 {
 	image seuilled;
-	seuilled.cols = 	cols;
 	seuilled.rows = 	rows;
+	seuilled.cols = 	cols;
 	seuilled.bitmap =	new pixel[rows*cols];
 	float seuil = 		Hseuil(p);
 	for (int i=0; i<rows*cols; ++i)
@@ -279,8 +279,8 @@ image image::seuil_histerisis(float high, float low)
 		}
 		
 	image seuilled;
-	seuilled.cols = 	cols;
 	seuilled.rows = 	rows;
+	seuilled.cols = 	cols;
 	seuilled.bitmap =	new pixel[rows*cols];
 	
 	for (int i=0; i<rows*cols; ++i)
@@ -289,6 +289,82 @@ image image::seuil_histerisis(float high, float low)
 	
 	return seuilled;
 }
+
+
+
+
+
+
+image image::affinage()
+{
+	image affined;
+	affined.rows		=		rows;
+	affined.cols		=		cols;
+	affined.bitmap	=		new pixel[rows*cols];
+	
+	for (int i=0; i<rows; i+=1)
+		for (int j=0; j<cols; j+=1)
+			if (bitmap[i*cols+j].get_canal(V))
+			{
+				
+				float theta = 	PI * bitmap[i*cols+j].get_canal(H) / 180.;
+				
+				int		x;
+				int		y;
+				float dx		=	sin(theta);
+				float dy		=	cos(theta);
+				float tmax	=	0.;
+				float tmin	=	0.;
+		
+				x = i;
+				y = j;
+				do
+				{
+					tmin--;
+					x = (int) (tmin*dx + i);
+					y = (int) (tmin*dy + j);
+				}
+				while
+				(
+						x > 0 && x < rows &&	y > 0 && y < cols
+				&&	bitmap[x*cols+y].get_canal(V)
+				&&	fmod(fabs(bitmap[i*cols+j].get_canal(H) - bitmap[x*cols+y].get_canal(H)), 360) < 90.
+				);
+				
+				x = i;
+				y = j;
+				do
+				{
+					tmax++;
+					x = (int) (tmax*dx + i);
+					y = (int) (tmax*dy + j);
+				}
+				while
+				(
+						x > 0 && x < rows &&	y > 0 && y < cols
+				&&	bitmap[x*cols+y].get_canal(V)
+				&&	fmod(fabs(bitmap[i*cols+j].get_canal(H) - bitmap[x*cols+y].get_canal(H)), 360) < 90.
+				);
+				
+				x = ((tmax+tmin)/2.)*dx + i;
+				y = ((tmax+tmin)/2.)*dy + j;
+				affined.bitmap[x*cols+y] = bitmap[x*cols+y];
+			}
+			
+	return affined;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

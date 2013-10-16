@@ -65,6 +65,8 @@ namespace lenactions {
 			image seuil_local();
 			image seuil_histerisis(float high, float low);
 			
+			image affinage();
+			
 			
     private:
       int o_cols(int j, int offset);

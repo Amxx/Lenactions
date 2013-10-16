@@ -44,6 +44,10 @@ convolution::convolution(float v[0], float n) : norm(n)
 
 
 
+convolution convolution::Smooth() {
+	float filtre[9] = { 1.f, 2.f, 1.f,  2.f,  4.f,  2.f,  1.f,  2.f,  1.f};
+	return convolution(filtre);
+}
 convolution convolution::PrewitzH() {
 	float filtre[9] = { -1.f, -1.f, -1.f,  0.f,  0.f,  0.f,  1.f,  1.f,  1.f};
 	return convolution(filtre);
