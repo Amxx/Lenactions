@@ -299,7 +299,7 @@ pixel pixel::quadratic(pixel& pi, pixel& pj)
 
 pixel	pixel::angleteinte(pixel&pi, pixel& pj)
 {
-	float h = 180. * atan2(pi.get_canal(V), pj.get_canal(V)) / PI;
+	float h = 180. * atan2(pj.get_canal(V), pi.get_canal(V)) / PI;
 	float s = 1;
 	float v = sqrt(pi.get_canal(V)*pi.get_canal(V)+pj.get_canal(V)*pj.get_canal(V));
 	

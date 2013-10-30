@@ -19,6 +19,8 @@
 
 #include "image.hh"
 
+#include <cassert>
+
 using namespace lenactions;
 
 /*
@@ -297,16 +299,24 @@ image image::seuil_histerisis(float high, float low)
 
 image image::affinage()
 {
-	image affined;
+	image affined; //(*this);
+	// /*
 	affined.rows		=		rows;
 	affined.cols		=		cols;
 	affined.bitmap	=		new pixel[rows*cols];
+	// */
+	
+	bool*	viewed = new bool[rows*cols];
+	for (int i=0; i<rows*cols; ++i)
+		viewed[i] = false;
+	
+	
 	
 	for (int i=0; i<rows; i+=1)
 		for (int j=0; j<cols; j+=1)
-			if (bitmap[i*cols+j].get_canal(V))
+			if ( bitmap[i*cols+j].get_canal(V) && !viewed[i*cols+j] )
 			{
-				
+				/*
 				float theta = 	PI * bitmap[i*cols+j].get_canal(H) / 180.;
 				
 				int		x;
@@ -316,13 +326,11 @@ image image::affinage()
 				float tmax	=	0.;
 				float tmin	=	0.;
 		
-				x = i;
-				y = j;
 				do
 				{
 					tmin--;
-					x = (int) (tmin*dx + i);
-					y = (int) (tmin*dy + j);
+					x = (int) (tmin*dx + .5 + i);
+					y = (int) (tmin*dy + .5 + j);
 				}
 				while
 				(
@@ -331,13 +339,11 @@ image image::affinage()
 				&&	fmod(fabs(bitmap[i*cols+j].get_canal(H) - bitmap[x*cols+y].get_canal(H)), 360) < 90.
 				);
 				
-				x = i;
-				y = j;
 				do
 				{
 					tmax++;
-					x = (int) (tmax*dx + i);
-					y = (int) (tmax*dy + j);
+					x = (int) (tmax*dx + .5 + i);
+					y = (int) (tmax*dy + .5 + j);
 				}
 				while
 				(
@@ -346,9 +352,52 @@ image image::affinage()
 				&&	fmod(fabs(bitmap[i*cols+j].get_canal(H) - bitmap[x*cols+y].get_canal(H)), 360) < 90.
 				);
 				
-				x = ((tmax+tmin)/2.)*dx + i;
-				y = ((tmax+tmin)/2.)*dy + j;
+				x = (int) (((tmax+tmin)/2.)*dx + .5 + i);
+				y = (int) (((tmax+tmin)/2.)*dy + .5 + j);
 				affined.bitmap[x*cols+y] = bitmap[x*cols+y];
+				*/
+				
+				
+				
+				int x, dx;
+				int y, dy;
+				int tmin, tmax;
+				
+				switch ( (int) (std::round(bitmap[i*cols+j].get_canal(H)/45)) % 4 )
+				{
+					case 0: dx =  1; dy =  0; break;
+					case 1: dx =  1; dy =  1; break;
+					case 2: dx =  0; dy =  1; break;
+					case 3: dx = -1; dy =  1; break;
+				}
+				
+				int k1 = 0;
+				while(true)
+				{
+					x = i + k1*dx;
+					y = j + k1*dy;
+					// printf("%")
+					if (x < 0 || x >= rows ||	y < 0 || y >= cols) break;
+					if (bitmap[x*cols+y].get_canal(V) == 0.)			break;
+					viewed[x*cols+y] = true;
+					++k1;
+				}
+				
+				int k2 = 0;
+				while(true)
+				{
+					x = i + k2*dx;
+					y = j + k2*dy;
+					if (x < 0 || x >= rows ||	y < 0 || y >= cols) break;
+					if (bitmap[x*cols+y].get_canal(V) == 0.)			break;
+					viewed[x*cols+y] = true;
+					--k2;
+				}
+				
+				x = ((k1+k2)/2.)*dx + i;
+				y = ((k1+k2)/2.)*dy + j;
+				affined.bitmap[x*cols+y] = bitmap[x*cols+y]; //.set_canal(V, 1.);
+				
 			}
 			
 	return affined;

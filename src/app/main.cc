@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 	out.close();
 
 	out.open("/dev/shm/out_sobel_teinte_seuilhisterisis_affinage.ppm");		
-	histeresis.affinage().affinage().to_stream(out, lenactions::P6);
+	histeresis.affinage().to_stream(out, lenactions::P6);
 	// histeresis.compose(lenactions::convolution::Smooth()).affinage().to_stream(out, lenactions::P6);
 	out.close();
   
