@@ -32,7 +32,7 @@ Unionfind& Unionfind::root()
 {
 	if (p != this)
 	{
-		p = p->root().p;
+		p = &p->root();
 		d = p->d+1;
 	}
 	return *p;
@@ -45,8 +45,8 @@ int& Unionfind::flag()
 
 void Unionfind::join(Unionfind& u)
 {
-	Unionfind	*r	= root().p;
-	Unionfind	*ur	= u.root().p;
+	Unionfind	*r	= &root();
+	Unionfind	*ur	= &u.root();
 	
 	if (r->f)
 		ur->p = r;

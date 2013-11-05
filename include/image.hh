@@ -25,6 +25,8 @@
 #include "convolution.hh"
 #include "unionfind.hh"
 
+#include "structure/priority.hh"
+
 namespace lenactions {
   
   class image {
@@ -35,6 +37,8 @@ namespace lenactions {
 			image(const image& cpy);
       image(std::istream& in);
       ~image();		
+		
+			pixel& operator[] (int);
 			
 			void from_stream(std::istream& in);
       void to_stream(std::ostream& out, format out_format);
@@ -66,6 +70,11 @@ namespace lenactions {
 			image seuil_histerisis(float high, float low);
 			
 			image affinage();
+			
+			image closedContours(float sHigh					= 0.95,
+													 float sLow						= 0.85,
+													 convolution hFilter	= lenactions::convolution::SobelH(),
+													 convolution vFilter	= lenactions::convolution::SobelV());
 			
 			
     private:

@@ -84,6 +84,13 @@ float pixel::get_canal(canal c)
   throw;
 }
 
+float pixel::r() { return get_canal(R); }
+float pixel::g() { return get_canal(G); }
+float pixel::b() { return get_canal(B); }
+float pixel::h() { return get_canal(H); }
+float pixel::s() { return get_canal(S); }
+float pixel::v() { return get_canal(V); }
+
 void pixel::set_canal(canal c, float v)
 {
   switch (c)
