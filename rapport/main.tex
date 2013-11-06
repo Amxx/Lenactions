@@ -1,5 +1,7 @@
 \input{Annexes/Packages.tex}
 \usepackage{subfigure}
+\usepackage{hyperref}
+\usepackage{draftwatermark}
 
 %% ======================================================================
 \begin{document}
@@ -58,12 +60,12 @@ L'ajout d'un drapeau au niveau des composantes connexes permet de marquer les co
 
 On ne garde ensuite que les pixels appartenants a une composante connexe marqué.
 
-\subsection*{Affinage de contour}
+\subsection*{Affinage des contours}
 Pour cette operation, on se base sur une image de contour obtenue a partir de l'operateur de melange \texttt{angle} appliqué a deux gradients.
 
 L'angle decrivant localement le contour (azimut du gradient) est discrétisé et permet de parcourir localement la largeur du contour. En ne gardant que le pixel au centre de ce contour on arrive a garder un contour fidéle, peu bruité et limitant les trous.
 
-\subsection*{Fermeture des contour}
+\subsection*{Fermeture des contours}
 Pour cette operation, nous avons developpé un algorithme a vague proche de ceux utilisés en systeme distribué pour la communication sur des grilles de processeurs.
 
 Ici chaque pixel est une entité pouvant etre dans 4 etats different :
@@ -98,7 +100,7 @@ Pour ce qui est des algorithmes developpés, nous sommes relativement content de
 L'utilisation de champ dans un algorithme a vague nous semble une piste interressante pour la fermeture des contours. Beaucoup de travail reste cependant a faire, aussi bien pour ce qui est du choix de la fonction de distance que pour les heuristiques de creation des liens d'ancrage.
 Nous esperons pouvoir continuer ammeliorer notre algorithme afin de le rendre plus efficace, notament en s'adaptant dynamiquement aux propriété de l'image.
 
-
+Le code du programme est disponible sous licence GNU GPL v3 sur GitHub : \url{https://github.com/Amxx/Lenactions}
 
 \newpage
 \section*{Annexes - Résultats} \label{resultats}
