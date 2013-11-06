@@ -3,8 +3,7 @@
 	#include <fstream>
   #include <map>
   
-	#include "pixel.hh"
-	#include "image.hh"
+	#include "Lenactions.hh"
 	
 	extern int line;
 	
@@ -12,17 +11,13 @@
 
   int yylex(); 
   int yyerror(std::string msg) {
-    
-				std::cout << "---"
-									<< "[PARSER]  Error line "
-									<< line
-									<< std::endl
-									<< msg
-									<< std::endl;
-
-		
-		std::cerr << "[ERROR] " << msg << std::endl;
-    return 1;
+    std::cerr	<< "---"
+							<< "[ERROR] parser : "
+							<< msg
+							<< " @ line "
+							<< line
+							<< std::endl;		
+		return 1;
   }
 
 %}
@@ -55,11 +50,12 @@
 %token            TK_CMD_KIRSCH
 
 %token            TK_CMD_HSEUIL
-%token            TK_CMD_SGLOBAL
-%token            TK_CMD_SLOCAL
-%token            TK_CMD_SHISTERESIS
+%token            TK_CMD_SEUILG
+%token            TK_CMD_SEUILL
+%token            TK_CMD_SEUILH
 %token            TK_CMD_AFFINAGE
-%token            TK_CMD_CLOSED
+%token            TK_CMD_CLOSEN
+%token            TK_CMD_CLOSEW
 
 %start prg
 
@@ -272,7 +268,7 @@ line:
     }
     free($2);
   }
-| TK_CMD_SGLOBAL TK_VAR TK_FLOAT TK_SEMI
+| TK_CMD_SEUILG TK_VAR TK_FLOAT TK_SEMI
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "seuil global " << $3 << " ..." << std::flush;
@@ -287,7 +283,7 @@ line:
     }
     free($2);
   }
-| TK_CMD_SLOCAL TK_VAR TK_SEMI
+| TK_CMD_SEUILL TK_VAR TK_SEMI
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "seuil local ..." << std::flush;
@@ -302,7 +298,7 @@ line:
     }
     free($2);
   }
-| TK_CMD_SHISTERESIS TK_VAR TK_FLOAT TK_FLOAT TK_SEMI
+| TK_CMD_SEUILH TK_VAR TK_FLOAT TK_FLOAT TK_SEMI
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "seuil histeresis " << $3 << ", " << $4 << "..." << std::flush;
@@ -333,12 +329,12 @@ line:
     free($2);
   }
 
-| TK_CMD_CLOSED TK_VAR TK_SEMI
+| TK_CMD_CLOSEN TK_VAR TK_SEMI
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "contours fermés ..." << std::flush;
       
-			lenactions::image* tmp = new lenactions::image(imgs[$2]->closedContours());
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->close_naive());
 			delete imgs[$2];
 			imgs[$2] = tmp;
 			
@@ -348,12 +344,42 @@ line:
     }
     free($2);
   }
-| TK_CMD_CLOSED TK_VAR TK_FLOAT TK_FLOAT TK_SEMI
+| TK_CMD_CLOSEN TK_VAR TK_FLOAT TK_FLOAT TK_SEMI
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "contours fermés " << $3 << ", " << $4 << " ..." << std::flush;
       
-			lenactions::image* tmp = new lenactions::image(imgs[$2]->closedContours($3, $4));
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->close_naive($3, $4));
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
+      std::cout << "done" << std::endl;
+    } else {    
+      std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
+    }
+    free($2);
+  }	
+| TK_CMD_CLOSEW TK_VAR TK_SEMI
+  {
+    if (imgs.find($2) !=  imgs.end()) {
+      std::cout << "contours fermés ..." << std::flush;
+      
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->close_waves());
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
+      std::cout << "done" << std::endl;
+    } else {    
+      std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
+    }
+    free($2);
+  }
+| TK_CMD_CLOSEW TK_VAR TK_FLOAT TK_FLOAT TK_SEMI
+  {
+    if (imgs.find($2) !=  imgs.end()) {
+      std::cout << "contours fermés " << $3 << ", " << $4 << " ..." << std::flush;
+      
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->close_waves($3, $4));
 			delete imgs[$2];
 			imgs[$2] = tmp;
 			

@@ -44,7 +44,7 @@ De nombreux algorithmes sont actuellement déployés dans la bibliothèque à di
 			\item Assemblage de deux images
 			\item Seuillage (local, global, histerisis)
 			\item Affinage de contour
-			\item Calcul de contour fermés
+			\item Calcul de contour fermés (méthode naive et méthode par vagues)
 		\end{itemize}
 \end{itemize}
 
@@ -65,8 +65,22 @@ Pour cette opération, on se base sur une image de contour obtenue à partir de 
 
 L'angle décrivant localement le contour (azimut du gradient) est discrétisé et permet de parcourir localement la largeur du contour. En ne gardant que le pixel au centre de ce contour on arrive à garder un contour fidèle, peu bruité et limitant les trous.
 
+
 \subsection{Fermeture des contours}
-Pour cette opération, nous avons développé un algorithme à vagues, proche de ceux utilisés en système distribué pour la communication sur des grilles de processeurs.
+\subsubsection{Méthode naïve}
+
+Le première version développe est une méthode naïve se basant sur une vision purement locale du problème.
+
+L'idée est de commencer par détecter, dans le contour affiné, les points caractéristiques de la discontinuité et de reconstruire les contours à partir de ces derniers.
+
+Pour cela on effectue une marche qui consiste à partir du point caractéristique et à se déplacer de proche en proche en choisissant toujours d'aller vers le pixel voisin (en excluant le pas précédant dans la marche) qui présente la norme du gradient la plus importante (avant seuillage).
+
+Les résultats sont intéressants sur des images simples avec des trous de petite tailles mais il nous est vite apparu que la vision local adopté par cette méthode n'est pas idéale pour résoudre une problématique globale. Nous avons donc cherché à mettre en œuvre une méthode plus complète.
+
+
+\subsubsection{Méthode à vagues / par diffusion}
+
+Cette variante est un algorithme inspiré des methodes de diffusion et des algorithmes à vagues utilisés en système distribué pour la communication sur des grilles de processeurs.
 
 Ici chaque pixel est une entité pouvant être dans l'un des quatre états suivants :
 \begin{itemize}

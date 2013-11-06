@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 	
   
 	out.open("/dev/shm/5_final.ppm");		
-	img.closedContours().to_stream(out, lenactions::P6);
+	img.close_naive().to_stream(out, lenactions::P6);
 	out.close();
 	
   return 0;

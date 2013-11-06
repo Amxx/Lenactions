@@ -32,11 +32,12 @@ string          \".*\"
 "kirsch"   	 	{ return TK_CMD_KIRSCH;                                     }
 
 "Hseuil"			{ return TK_CMD_HSEUIL;                                     }
-"sGlobal"			{ return TK_CMD_SGLOBAL;                                    }
-"sLocal"			{ return TK_CMD_SLOCAL;                                     }
-"sHisteresis"	{ return TK_CMD_SHISTERESIS;                                }
+"seuil_G"			{ return TK_CMD_SEUILG;                                     }
+"seuil_L"			{ return TK_CMD_SEUILL;                                     }
+"seuil_H"			{ return TK_CMD_SEUILH; 	                                  }
 "affinage"		{ return TK_CMD_AFFINAGE;                                   }
-"close"				{ return TK_CMD_CLOSED;                                     }
+"close_N"			{ return TK_CMD_CLOSEN;                                     }
+"close_W"			{ return TK_CMD_CLOSEW;                                     }
 
 {float}       { yylval.floating = atof(yytext);       return TK_FLOAT;    }
 {format}      { yylval.integer = (yytext[1] - '0');   return TK_FORMAT;   }

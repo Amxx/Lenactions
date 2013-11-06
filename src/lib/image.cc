@@ -323,14 +323,11 @@ image image::affinage()
 			{
 				/*
 				float theta = 	PI * bitmap[i*cols+j].get_canal(H) / 180.;
-				
-				int		x;
-				int		y;
+				int		x, y;
 				float dx		=	sin(theta);
 				float dy		=	cos(theta);
 				float tmax	=	0.;
 				float tmin	=	0.;
-		
 				do
 				{
 					tmin--;
@@ -361,8 +358,6 @@ image image::affinage()
 				y = (int) (((tmax+tmin)/2.)*dy + .5 + j);
 				affined.bitmap[x*cols+y] = bitmap[x*cols+y];
 				*/
-				
-				
 				
 				int x, dx;
 				int y, dy;
@@ -410,10 +405,131 @@ image image::affinage()
 
 
 
+//===========================================================================================================================
+
+image image::close_naive(	float sHigh,
+													float sLow,
+													convolution hFilter,
+													convolution vFilter)
+{
+	image hGrad 	= this->compose(hFilter);
+	image vGrad 	= this->compose(vFilter);
+	image	gTone 	= assemblage(hGrad, vGrad, pixel::angleteinte);
+	
+	float high		= gTone.Hseuil(sHigh);
+	float low			= gTone.Hseuil(sLow);
+	image Border	= gTone.seuil_histerisis(high, low);
+	
+	image Affined	= Border.affinage(); 
+	
+  std::ofstream out;
+
+	out.open("/dev/shm/1a_hGrad.ppm");	hGrad.to_stream(out, lenactions::P6);	out.close();
+	out.open("/dev/shm/1b_vGrad.ppm");	vGrad.to_stream(out, lenactions::P6);	out.close();
+	out.open("/dev/shm/2_gTone.ppm");		gTone.to_stream(out, lenactions::P6);	out.close();
+	out.open("/dev/shm/3_Border.ppm");	Border.to_stream(out, lenactions::P6);	out.close();
+	out.open("/dev/shm/4_Affined.ppm");	Affined.to_stream(out, lenactions::P6);	out.close();
+	
+	//-------------------------------------------------------------------------------------------------------------------------
+			
+	std::vector<std::pair<int, int>> 				anchors;
+	
+	for (int i=1; i<rows-1; ++i)
+		for (int j=1; j<cols-1; ++j)
+			if (Affined[i*cols+j].v())
+			{
+				
+				int c = 0;
+				
+				if (Affined[(i+1) * cols + j  ].v())	c |= 0x00000001;
+				if (Affined[i     * cols + j+1].v())	c |= 0x00000002;
+				if (Affined[(i-1) * cols + j  ].v())	c |= 0x00000004;
+				if (Affined[i     * cols + j-1].v())	c |= 0x00000008;
+				
+				switch (c)
+				{
+					case 0x00000000:
+						anchors.push_back(std::make_pair(i*cols+j, -1));
+						anchors.push_back(std::make_pair(i*cols+j, -1));
+						break;
+					
+					case 0x00000001:
+						anchors.push_back(std::make_pair(i*cols+j, 0));
+						break;
+					
+					case 0x00000002:
+						anchors.push_back(std::make_pair(i*cols+j, 1));
+						break;
+						
+					case 0x00000004:
+						anchors.push_back(std::make_pair(i*cols+j, 2));
+						break;
+						
+					case 0x00000008:
+						anchors.push_back(std::make_pair(i*cols+j, 3));
+						break;
+					
+												
+					default:
+						break;
+				}
+			}
+	
+	while(!anchors.empty())
+	{
+		int pos = anchors.back().first;
+		int dir = anchors.back().second;
+		int i		= pos / cols;
+		int j		= pos % cols;
+		
+		if (dir == -1)
+		{
+			if (Affined[(i+1) * cols + j  ].v())	dir = 0;
+			if (Affined[i     * cols + j+1].v())	dir = 1;
+			if (Affined[(i-1) * cols + j  ].v())	dir = 2;
+			if (Affined[i     * cols + j-1].v())	dir = 3;
+		}
+		
+		do
+		{
+			
+			if (Affined[pos].v() == 0.) Affined[pos] = pixel(1., 1., 1.);
+
+			int		new_pos;
+			int 	new_dir;
+			float max_val	= -1;
+			int		neigh		= 0;
+						
+			if (Affined[(i+1)*cols+    j].v()) ++neigh;
+			if (Affined[    i*cols+(j+1)].v()) ++neigh;
+			if (Affined[(i-1)*cols+    j].v()) ++neigh;
+			if (Affined[    i*cols+(j-1)].v()) ++neigh;
+			
+			if ( neigh > 1) break;
+				
+			if ( dir != 0 && gTone[(i+1)*cols+    j].v() > max_val ) { new_pos = (i+1)*cols+    j; new_dir = 2; max_val = gTone[new_pos].v(); }
+			if ( dir != 1 && gTone[    i*cols+(j+1)].v() > max_val ) { new_pos =     i*cols+(j+1); new_dir = 3; max_val = gTone[new_pos].v(); }
+			if ( dir != 2 && gTone[(i-1)*cols+    j].v() > max_val ) { new_pos = (i-1)*cols+    j; new_dir = 0; max_val = gTone[new_pos].v(); }
+			if ( dir != 3 && gTone[    i*cols+(j-1)].v() > max_val ) { new_pos =     i*cols+(j-1); new_dir = 1; max_val = gTone[new_pos].v(); }
+			
+			pos = new_pos;
+			dir = new_dir;
+			i		= pos / cols;
+			j		= pos % cols;
+
+		} 
+		while ( i != 0 && i != rows-1 && j != 0 && j != cols-1 && Affined[pos].v() == 0.);
+		anchors.pop_back();
+	}
+	
+	return Affined;	
+}
 
 
 
 
+
+//===========================================================================================================================
 
 // #define SET_WHITE
 // #define SHOW_ANCHOR
@@ -425,13 +541,10 @@ image image::affinage()
 #define				TYPE_ATTACH		4
 #define 			LINK(x) 			{ int idx = x; while (idx != fieldFather[idx]) { Affined[idx] = pixel(1., 1., 1.); idx = fieldFather[idx]; } }
 
-
-//===========================================================================================================================
-
-image image::closedContours(float sHigh,
-														float sLow,
-														convolution hFilter,
-														convolution vFilter)
+image image::close_waves(	float sHigh,
+													float sLow,
+													convolution hFilter,
+													convolution vFilter)
 {
 	image hGrad 	= this->compose(hFilter);
 	image vGrad 	= this->compose(vFilter);
