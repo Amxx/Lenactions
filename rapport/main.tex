@@ -9,32 +9,32 @@
 %% ======================================================================
 %% ======================================================================
 
-\section*{Philosophie d'utilisation}
-Dans le cadre de ce projet, les outils developpés ont toujours été pévu pour etre reutilisés. Ainsi le code se decompose tout naturelllement en deux parties, une librairie facilement compliable au format \texttt{.so} ou \texttt{.dll} fournit avec les fichier en-tête correspondant d'un coté et d'autre part un programme simple permettant d'appeler facillement les fonctionnalitées de la librairie.
+\section{Philosophie d'utilisation}
+Dans le cadre de ce projet, les outils développés ont toujours été prévu pour être réutilisés. Ainsi le code se décompose tout naturellement en deux parties, d'un coté une librairie facilement compilable au format \texttt{.so} ou \texttt{.dll} fournit avec les fichiers en-tête correspondant et d'autre part un programme simple appelant les fonctionnalités de la bibliothèque.
 
-Afin de donner differents exemples d'utilisation de la bibliothèque \emph{lenactions}, deux applications sont fournis et donne ainsi differents exemple d'utilisation plus ou moins aux niveaux des fonctionnalités de la bibliotheque.
+Afin de donner différents exemples d'utilisation de la bibliothèque \emph{lenactions}, deux applications sont fournies et donnent ainsi différents exemples d'utilisation plus ou moins haut niveaux des fonctionnalités de la bibliothèque.
 \begin{itemize}
-	\item \textbf{Lenaction} : programme simple, effectuant des appels a la bibliotheque a partir des arguments hard-codé dans le code du programme.
-	\item \textbf{LenaSH} : un shell minimaliste interprettant des commandes ecrites dans un langage ad-hoc et proposant ainsi une interface haut niveau pour l'utilisateur.
+	\item \textbf{Lenaction} : programme simple, effectuant des appels à la bibliothèque à partir des arguments codés en dur dans le programme.
+	\item \textbf{LenaSH} : un shell minimaliste interprétant des commandes écrites dans un langage ad-hoc et proposant ainsi une interface haut niveau pour l'utilisateur.
 \end{itemize}
 
-\section*{Outils utlisés}
-Afin d'optimiser la portabilité de la bibliothèque, cette derniere ne depend d'aucun autre outil. Ecrite en C/C++ elle gere toutes les etapes du traitement d'images, du chargement de fichier au calcul de contours, en passant par la transition dynamique entre les espaces de couleur \textsc{rgb} et \textsc{hsv}.
+\section{Outils utlisés}
+Afin d'optimiser la portabilité de la bibliothèque, cette dernière ne dépend d'aucun autre outil. Ecrite en C/C++ elle gère toutes les étapes du traitement d'images, du chargement de fichier au calcul de contours, en passant par la transition dynamique entre les espaces de couleur \textsc{rgb} et \textsc{hsv}.
 
-Le programme \textbf{LenaSH} utilse les outils flex et bison pour la reconnaissance du langage ad-hoc developpé parallement a la librairie.
+Le programme \textbf{LenaSH} utilise les outils \textsc{flex} et \textsc{bison} pour la reconnaissance du langage ad-hoc développé parallèlement à la librairie.
 
-Afin de simplifier l'etape de compilation des differents composants du programme sur differentes architectures, nous utilisons l'outil CMake ainsi qu'un script \texttt{./generator}.
+Afin de simplifier l'étape de compilation des différents composants du programme sur différentes architectures, nous utilisons l'outil \textsc{CMake} ainsi qu'un script \texttt{./generator}.
 
 
-\section*{Fonctionnalités}
+\section{Fonctionnalités}
 
-De nombreux algorithmes sont actuellement deployés dans la bibliotheque a differents niveau:
+De nombreux algorithmes sont actuellement déployés dans la bibliothèque à différents niveaux :
 
 \begin{itemize}
 	\item Pixel :
 		\begin{itemize}
-			\item Convertion d'espace de couleur
-			\item Operateurs de fusion (quadratique, angle)
+			\item Conversion d'espace de couleur
+			\item Opérateurs de fusion (quadratique, angle)
 		\end{itemize}
 	\item Image :
 		\begin{itemize}
@@ -48,27 +48,27 @@ De nombreux algorithmes sont actuellement deployés dans la bibliotheque a diffe
 		\end{itemize}
 \end{itemize}
 
-La mise en place de filtre de convolution standart permet par ailleur de calculer simplement les contours via les filtres de Prewitt, Sobel et Kirsch ainsi que d'appliquer un filtre moyenneur gaussien pour lisser l'image.
+La mise en place de filtre de convolution standard permet par ailleurs de calculer simplement les contours via les filtres de Prewitt, Sobel et Kirsch ainsi que d'appliquer un filtre moyenneur gaussien pour lisser l'image.
 
 
 
-\section*{Algorithme}
-\subsection*{seuillage par histerisis}
-Cette operation de seuillage revient a calcul des composantes connexes pour le critere de luminosité $(>low)$ dans l'image. Pour cela on utilise une structure de union find qui garanti un resultat rapide $\mathcal O(n.Ack^{-1}(n))$.
+\section{Algorithme}
+\subsection{seuillage par histerisis}
+Cette opération de seuillage revient à calculer des composantes connexes pour le critère de luminosité $(>low)$ dans l'image. Pour cela on utilise une structure de \emph{union find} qui garantit un résultat rapide $\mathcal O(n.Ack^{-1}(n))$.
 
-L'ajout d'un drapeau au niveau des composantes connexes permet de marquer les composantes dont un des elements verifie le critere de luminosité $(>high)$.
+L'ajout d'un drapeau au niveau des composantes connexes permet de marquer les composantes dont un des éléments vérifie le critère de luminosité $(>high)$.
 
-On ne garde ensuite que les pixels appartenants a une composante connexe marqué.
+On ne garde ensuite que les pixels appartenant à une composante connexe marquée.
 
-\subsection*{Affinage des contours}
-Pour cette operation, on se base sur une image de contour obtenue a partir de l'operateur de melange \texttt{angle} appliqué a deux gradients.
+\subsection{Affinage des contours}
+Pour cette opération, on se base sur une image de contour obtenue à partir de l'opérateur de mélange \texttt{angle} appliqué à deux gradients.
 
-L'angle decrivant localement le contour (azimut du gradient) est discrétisé et permet de parcourir localement la largeur du contour. En ne gardant que le pixel au centre de ce contour on arrive a garder un contour fidéle, peu bruité et limitant les trous.
+L'angle décrivant localement le contour (azimut du gradient) est discrétisé et permet de parcourir localement la largeur du contour. En ne gardant que le pixel au centre de ce contour on arrive à garder un contour fidèle, peu bruité et limitant les trous.
 
-\subsection*{Fermeture des contours}
-Pour cette operation, nous avons developpé un algorithme a vague proche de ceux utilisés en systeme distribué pour la communication sur des grilles de processeurs.
+\subsection{Fermeture des contours}
+Pour cette opération, nous avons développé un algorithme à vagues, proche de ceux utilisés en système distribué pour la communication sur des grilles de processeurs.
 
-Ici chaque pixel est une entité pouvant etre dans 4 etats different :
+Ici chaque pixel est une entité pouvant être dans l'un des quatre états suivants :
 \begin{itemize}
 	\item \emph{Vide}
 	\item \emph{Champ}
@@ -76,41 +76,45 @@ Ici chaque pixel est une entité pouvant etre dans 4 etats different :
 	\item \emph{Ancre}
 \end{itemize}
 
-Au debut de l'algorithme, on part d'un contour affiné dont les pixels sont dans l'etat \emph{Contour} tandit que le fond est dans l'etat \emph{Vide}.
+Au début de l'algorithme, on part d'un contour affiné dont les pixels sont dans l'état \emph{Contour} tandis que le fond est dans l'état \emph{Vide}.
 
-La premiere passe se charge de detecter les Ancres parmit des pixels du Contours, pour cela on detecte tout ceux qui ont soit aucun voisin (ancres d'adjacence 2) ainsi que ceux qui sont en bord de contour (soit un unique voisin, soit deux voisin collés) et qui sont des ancres d'adjacence 1.
+La première passe se charge de détecter les \emph{Ancres} parmi les pixels du Contour. Pour cela on détecte tout ceux qui ont soit aucun voisin (ancres d'adjacence 2) soit ceux qui sont en bord de contour (un unique voisin ou deux voisins collés) qui sont des ancres d'adjacence 1.
 
-Les ancres sont les points d'interet qu'il sagit de relié. Leur adjacence correspond au nombre de liaison à former pour faire partie d'un contour fermé.
+Les ancres sont les points d'intérêt qu'il s'agit de relier. Leur adjacence correspond au nombre de liaison à former pour faire partie d'un contour fermé.
 
-A partir de la on applique un algorithme de diffusion pour repandre un champ autour des ancres, les pixels passant ainsi de l'etat \emph{Vide} à l'etat \emph{Champ}.
+A partir de là, on applique un algorithme de diffusion pour répandre un champ autour des ancres. Les pixels passent ainsi de l'état \emph{Vide} à l'état \emph{Champ}.
 
-La jonction de champs provoquant la liaison des deux ancres et la diminution de leur adjacence. Si un champ rencontre un pixel d'un contour qui n'est pas dans la composante connexe de l'ancre associé au champ, il s'y accrochera, faisant par la meme occasion diminué l'adjacence de l'ancre dont il provient.
-Pour cette diffusion on utilise une file de priorité implementé a partir de tas ainsi qu'une distance basé sur \textsc{BLUE} (best linear unbiased evaluation) et prenant aussi en compte les variations successives du gradient le long du contour a retrouver
+La jonction de champs provoque la liaison des deux ancres et la diminution de leur adjacence.
 
-Cet algorithme donne de bon de resultats des lors que les la taille des trous est inferieur à la taille des composantes connexes à fermer. 
+Si un champ rencontre un pixel d'un contour et que celui ci n'est pas dans la composante connexe de l'ancre associé au champ, il s'y accroche, faisant par la même occasion diminuer l'adjacence de l'ancre dont il provient.
 
-Voir la section~\ref{resultats}.
+Pour cette diffusion on utilise une file de priorité implémentée à partir d'un tas et une distance basé sur \textsc{BLUE} (best linear unbiased evaluation) qui prend aussi en compte les variations successives du gradient le long du contour à retrouver.
 
-\section*{Conclusion}
+Cet algorithme donne de bons résultats des lors que la taille des trous est inférieure à la taille des composantes connexes à fermer. 
 
-Apres de longue seances de recherche, nous sommes satisfait de la forme que prend notre bibliotheque. Ne nombreux outils precedements developpé dans le cadre de \texttt{LibImAMXX} (librairie graphique developpé par Hadrien Croubois en M1 et qui a servit de support) sont actuellement en cours d'ajout. Parmit ces outils on compte notament l'affichage des histogrammes avec \texttt{gnuplot}, la normalisation des espaces de couleurs ainsi que le tatouage.
+Voir la partie~\ref{resultats} (page~\pageref{resultats}).
 
-Pour ce qui est des algorithmes developpés, nous sommes relativement content des resultats renvoyés par l'algorithme d'affinage.
+\section{Conclusion}
 
-L'utilisation de champ dans un algorithme a vague nous semble une piste interressante pour la fermeture des contours. Beaucoup de travail reste cependant a faire, aussi bien pour ce qui est du choix de la fonction de distance que pour les heuristiques de creation des liens d'ancrage.
-Nous esperons pouvoir continuer ammeliorer notre algorithme afin de le rendre plus efficace, notament en s'adaptant dynamiquement aux propriété de l'image.
+Âpres de longue séances de recherche, nous sommes satisfait de la forme que prend notre bibliothèque. De nombreux outils précédemment développés dans le cadre de \texttt{LibImAMXX} (librairie graphique développé par Hadrien Croubois en M1 et qui a servi de support) sont actuellement en cours d'ajout. Parmi ces outils on compte notamment l'affichage des histogrammes avec \texttt{gnuplot}, la normalisation des espaces de couleurs ainsi que le tatouage.
+
+Pour ce qui est des algorithmes développés, nous sommes relativement content des résultats renvoyés par l'algorithme d'affinage.
+
+L'utilisation de champs dans un algorithme à vagues nous semble une piste intéressante pour la fermeture des contours. Beaucoup de travail reste cependant à faire, aussi bien pour ce qui est du choix de la fonction de distance que pour les heuristiques de création des liens d'ancrage.
+Nous espérons pouvoir continuer à améliorer notre algorithme afin de le rendre plus efficace, notamment en s'adaptant dynamiquement aux propriétés de l'image.
 
 Le code du programme est disponible sous licence GNU GPL v3 sur GitHub : \url{https://github.com/Amxx/Lenactions}
 
+\appendix
 \newpage
-\section*{Annexes - Résultats} \label{resultats}
+\section{Annexes - Résultats} \label{resultats}
 
 
 \begin{figure}[ht]
 	\center
-	\subfigure[Forme geometriques]	{ \includegraphics[width=5cm]{imgs/test_image.png} }
+	\subfigure[Formes géométriques]	{ \includegraphics[width=5cm]{imgs/test_image.png} }
 	\subfigure[Lena]								{ \includegraphics[width=5cm]{imgs/lena512.png} }
-	\caption{Images utilisés lors des tests}
+	\caption{Images utilisées lors des tests}
 \end{figure}
 
 \begin{figure}[ht]
@@ -121,7 +125,7 @@ Le code du programme est disponible sous licence GNU GPL v3 sur GitHub : \url{ht
 	\subfigure[Contour seuillé]			{ \includegraphics[width=5cm]{imgs/test/3_Border.png} }	
 	\subfigure[Contour affiné]			{ \includegraphics[width=5cm]{imgs/test/4_Affined.png} }
 	\subfigure[Contour fermé]				{ \includegraphics[width=5cm]{imgs/test/5_final.png} }
-	\caption{Résultats intermediaire pour des formes simples}
+	\caption{Résultats intermédiaires pour des formes simples}
 \end{figure}
 
 \begin{figure}[ht]
@@ -134,7 +138,7 @@ Le code du programme est disponible sous licence GNU GPL v3 sur GitHub : \url{ht
 	\subfigure[Points d'ancrage]					{ \includegraphics[width=5.5cm]{imgs/lena/5a_final_anchors.png} }
 	\subfigure[Limites de la diffusion]		{ \includegraphics[width=5.5cm]{imgs/lena/5b_final_diffusion.png} }
 	\subfigure[Apres fermeture]						{ \includegraphics[width=5.5cm]{imgs/lena/5c_final_white.png} }
-	\caption{Résultats intermediaire pour Lena}
+	\caption{Résultats intermédiaires pour Lena}
 \end{figure}
 
 
