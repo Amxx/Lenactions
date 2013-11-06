@@ -2,6 +2,8 @@
   #include <iostream>
 	#include <string>
 	#include "parser.hh"
+	
+	int line = 1;
 %}
 
 float           [0-9]*(\.[0-9]*)?
@@ -13,7 +15,8 @@ string          \".*\"
 
 %%
 
-[ \t\r\n]			{ break;                                                    }
+[ \t\r]				{ break;                                                    }
+[\n]					{ line++; break;                                            }
 ";"           { return TK_SEMI;                                           }
 
 "quit"        { return TK_CMD_QUIT;                                       }
@@ -33,14 +36,17 @@ string          \".*\"
 "sLocal"			{ return TK_CMD_SLOCAL;                                     }
 "sHisteresis"	{ return TK_CMD_SHISTERESIS;                                }
 "affinage"		{ return TK_CMD_AFFINAGE;                                   }
-"closed"			{ return TK_CMD_CLOSED;                                     }
+"close"				{ return TK_CMD_CLOSED;                                     }
 
 {float}       { yylval.floating = atof(yytext);       return TK_FLOAT;    }
 {format}      { yylval.integer = (yytext[1] - '0');   return TK_FORMAT;   }
 {var}         { yylval.string = strdup(&(yytext[1])); return TK_VAR;      }
 {path}        { yylval.string = strdup(yytext);       return TK_PATH;     }
 {string}      { yylval.string = strdup(yytext);       return TK_STRING;   }
-.							{ exit(1);                                                  }
+.							{ std::cout << "[LEXER] Syntax error line : "
+													<< line
+													<< std::endl;
+								exit(1);                                                  }
 
 
 %%

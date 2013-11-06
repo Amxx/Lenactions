@@ -1,14 +1,27 @@
 %{
 	#include <iostream>
+	#include <fstream>
   #include <map>
   
 	#include "pixel.hh"
 	#include "image.hh"
+	
+	extern int line;
+	
   static std::map<std::string, lenactions::image*> imgs;
 
   int yylex(); 
   int yyerror(std::string msg) {
-    std::cerr << "[ERROR] " << msg << std::endl;
+    
+				std::cout << "---"
+									<< "[PARSER]  Error line "
+									<< line
+									<< std::endl
+									<< msg
+									<< std::endl;
+
+		
+		std::cerr << "[ERROR] " << msg << std::endl;
     return 1;
   }
 
@@ -179,7 +192,11 @@ line:
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "smoothing..." << std::flush;
-      *(imgs[$2]) = imgs[$2]->compose(lenactions::convolution::Smooth());
+      
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->compose(lenactions::convolution::Smooth()));
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
       std::cout << "done" << std::endl;
     } else {    
       std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
@@ -193,7 +210,10 @@ line:
 			
 			lenactions::image tempH = imgs[$2]->compose(lenactions::convolution::PrewitzH());
 			lenactions::image tempV = imgs[$2]->compose(lenactions::convolution::PrewitzV());
-      *(imgs[$2]) = lenactions::image::assemblage(tempH, tempV, lenactions::pixel::angleteinte);
+
+			lenactions::image* tmp = new lenactions::image(lenactions::image::assemblage(tempH, tempV, lenactions::pixel::angleteinte));
+			delete imgs[$2];
+			imgs[$2] = tmp;
 			
       std::cout << "done" << std::endl;
     } else {    
@@ -208,7 +228,10 @@ line:
 										
 			lenactions::image tempH = imgs[$2]->compose(lenactions::convolution::SobelH());
 			lenactions::image tempV = imgs[$2]->compose(lenactions::convolution::SobelV());
-      *(imgs[$2]) = lenactions::image::assemblage(tempH, tempV, lenactions::pixel::angleteinte);
+			
+			lenactions::image* tmp = new lenactions::image(lenactions::image::assemblage(tempH, tempV, lenactions::pixel::angleteinte));
+			delete imgs[$2];
+			imgs[$2] = tmp;
 			
       std::cout << "done" << std::endl;
     } else {    
@@ -223,7 +246,10 @@ line:
 			
 			lenactions::image tempH = imgs[$2]->compose(lenactions::convolution::KirschH());
 			lenactions::image tempV = imgs[$2]->compose(lenactions::convolution::KirschV());
-      *(imgs[$2]) = lenactions::image::assemblage(tempH, tempV, lenactions::pixel::angleteinte);
+			
+			lenactions::image* tmp = new lenactions::image(lenactions::image::assemblage(tempH, tempV, lenactions::pixel::angleteinte));
+			delete imgs[$2];
+			imgs[$2] = tmp;
 			
       std::cout << "done" << std::endl;
     } else {    
@@ -250,7 +276,11 @@ line:
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "seuil global " << $3 << " ..." << std::flush;
-      *(imgs[$2]) = imgs[$2]->seuil_global($3);
+			
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->seuil_global($3));
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
       std::cout << "done" << std::endl;
     } else {    
       std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
@@ -261,7 +291,11 @@ line:
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "seuil local ..." << std::flush;
-      *(imgs[$2]) = imgs[$2]->seuil_local();
+			
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->seuil_local());
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
       std::cout << "done" << std::endl;
     } else {    
       std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
@@ -272,7 +306,11 @@ line:
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "seuil histeresis " << $3 << ", " << $4 << "..." << std::flush;
-      *(imgs[$2]) = imgs[$2]->seuil_histerisis($3, $4);
+      
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->seuil_histerisis($3, $4));
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
       std::cout << "done" << std::endl;
     } else {    
       std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
@@ -283,7 +321,11 @@ line:
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "affinage ..." << std::flush;
-      *(imgs[$2]) = imgs[$2]->affinage();
+      
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->affinage());
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
       std::cout << "done" << std::endl;
     } else {    
       std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
@@ -295,7 +337,11 @@ line:
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "contours fermés ..." << std::flush;
-      *(imgs[$2]) = imgs[$2]->closedContours();
+      
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->closedContours());
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
       std::cout << "done" << std::endl;
     } else {    
       std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
@@ -306,13 +352,17 @@ line:
   {
     if (imgs.find($2) !=  imgs.end()) {
       std::cout << "contours fermés " << $3 << ", " << $4 << " ..." << std::flush;
-      *(imgs[$2]) = imgs[$2]->closedContours($3, $4);
+      
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->closedContours($3, $4));
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
       std::cout << "done" << std::endl;
     } else {    
       std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
     }
     free($2);
-  }
+  }	
 ;
 
 

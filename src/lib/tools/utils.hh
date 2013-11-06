@@ -17,26 +17,21 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#ifndef UNIONFIND_HH
-#define UNIONFIND_HH
+#ifndef UTILS_HH
+#define UTILS_HH
+
+#include <iostream>
+#include <fstream>
+
 namespace lenactions {
 
-	class Unionfind
-	{
-		public:
-			Unionfind(int f = 0);
-			Unionfind&	root();
-			int&				flag();
-			void				join(Unionfind& u);
-		private:
-			Unionfind*	p;
-			int 				d;
-			int 				f;
-	};
-}
+	char getc(std::istream& in);
+	unsigned char getbit(std::istream& in);
+	unsigned char getrawbyte(std::istream& in);
+	int getint(std::istream& in);
 
+  void error(const char* str);
+  
+};
 
-
-
-
-#endif
+#endif // UTILS_H

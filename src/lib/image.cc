@@ -18,6 +18,9 @@
 \*/
 
 #include "image.hh"
+#include "tools/utils.hh"
+#include "tools/priority.hh"
+#include "tools/unionfind.hh"
 
 #include <cassert>
 
@@ -522,7 +525,7 @@ image image::closedContours(float sHigh,
 				}
 			}
 	
-	printf("Closing : %ld points of interest\n", fieldDiffusion.size());			
+	// printf("Closing : %ld points of interest\n", fieldDiffusion.size());			
 			
 	while(!fieldDiffusion.empty())
 	{

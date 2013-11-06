@@ -1,5 +1,5 @@
 /*\
-* ImAMXX
+* lenactions
 * A simple image editing library
 * Copyrigth 2013 - Hadrien Croubois
 *

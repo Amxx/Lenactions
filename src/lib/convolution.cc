@@ -19,7 +19,6 @@
 
 #include "convolution.hh"
 
-
 #include <cstdio>
 
 using namespace lenactions;

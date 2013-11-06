@@ -1,0 +1,4 @@
+load $img imgs/test_image.pgm;
+close $img;
+export $img export.ppm;
+quit;

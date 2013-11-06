@@ -20,12 +20,8 @@
 #ifndef IMAGE_HH
 #define IMAGE_HH
 
-#include "utils.hh"
 #include "pixel.hh"
 #include "convolution.hh"
-#include "unionfind.hh"
-
-#include "structure/priority.hh"
 
 namespace lenactions {
   

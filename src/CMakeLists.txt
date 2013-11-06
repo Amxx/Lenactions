@@ -3,12 +3,11 @@ include_directories(
 )
 
 set(lenactions_src
-  lib/utils.cc
-	lib/pixel.cc
+  lib/pixel.cc
 	lib/convolution.cc
 	lib/image.cc
-	lib/unionfind.cc
-	
+	lib/tools/unionfind.cc
+	lib/tools/utils.cc
   
   app/main.cc
 )
@@ -43,11 +42,11 @@ flex_target(
 add_flex_bison_dependency(Lexer Parser)
 
 set(lenash_src
-  lib/utils.cc
-	lib/pixel.cc
+  lib/pixel.cc
 	lib/convolution.cc
 	lib/image.cc
-	lib/unionfind.cc
+	lib/tools/unionfind.cc
+	lib/tools/utils.cc
 	
 	${CMAKE_CURRENT_BINARY_DIR}/parser.cc
 	${CMAKE_CURRENT_BINARY_DIR}/lexer.cc
