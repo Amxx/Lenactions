@@ -249,7 +249,9 @@ image image::seuil_global(float p)
 	seuilled.rows = 	rows;
 	seuilled.cols = 	cols;
 	seuilled.bitmap =	new pixel[rows*cols];
-	float seuil = 		Hseuil(p);
+	
+	float seuil = (p>0)?p:Hseuil(-p);
+	
 	for (int i=0; i<rows*cols; ++i)
 		if (bitmap[i].get_canal(V)>seuil)
 			seuilled.bitmap[i] = bitmap[i];
@@ -270,22 +272,26 @@ image image::seuil_local()
 
 image image::seuil_histerisis(float high, float low)
 {
+	float shigh = (high>0)?high:Hseuil(-high);
+	float slow  = (low>0)	?low :Hseuil(-low );
+	
+	
 	Unionfind* uf = new Unionfind[rows*cols];
 	for (int i=0; i<rows; ++i)
 		for (int j=0; j<cols; ++j)
 		{
-			if (bitmap[i*cols+j].get_canal(V) > high)
+			if (bitmap[i*cols+j].get_canal(V) > shigh)
 				uf[i*cols+j].flag() = 1;
-			if (bitmap[i*cols+j].get_canal(V) > low)
+			if (bitmap[i*cols+j].get_canal(V) > slow)
 			{
-				if (i>0      && j>0      && bitmap[(i-1) * cols + j-1].get_canal(V) > low)		uf[i*cols+j].join(uf[(i-1) * cols + j-1]);
-				if (i>0                  && bitmap[(i-1) * cols + j  ].get_canal(V) > low)		uf[i*cols+j].join(uf[(i-1) * cols + j  ]);
-				if (i>0      && j<cols-1 && bitmap[(i-1) * cols + j+1].get_canal(V) > low)		uf[i*cols+j].join(uf[(i-1) * cols + j+1]);
-				if (            j<cols-1 && bitmap[i		 * cols + j+1].get_canal(V) > low)		uf[i*cols+j].join(uf[i     * cols + j+1]);
-				if (i<rows-1 && j>cols-1 && bitmap[(i+1) * cols + j+1].get_canal(V) > low)		uf[i*cols+j].join(uf[(i+1) * cols + j+1]);
-				if (i<rows-1             && bitmap[(i+1) * cols + j  ].get_canal(V) > low)		uf[i*cols+j].join(uf[(i+1) * cols + j  ]);
-				if (i<rows-1 && j>0      && bitmap[(i+1) * cols + j-1].get_canal(V) > low)		uf[i*cols+j].join(uf[(i+1) * cols + j-1]);
-				if (            j>0      && bitmap[i     * cols + j-1].get_canal(V) > low)		uf[i*cols+j].join(uf[i     * cols + j-1]);
+				if (i>0      && j>0      && bitmap[(i-1) * cols + j-1].get_canal(V) > slow)		uf[i*cols+j].join(uf[(i-1) * cols + j-1]);
+				if (i>0                  && bitmap[(i-1) * cols + j  ].get_canal(V) > slow)		uf[i*cols+j].join(uf[(i-1) * cols + j  ]);
+				if (i>0      && j<cols-1 && bitmap[(i-1) * cols + j+1].get_canal(V) > slow)		uf[i*cols+j].join(uf[(i-1) * cols + j+1]);
+				if (            j<cols-1 && bitmap[i		 * cols + j+1].get_canal(V) > slow)		uf[i*cols+j].join(uf[i     * cols + j+1]);
+				if (i<rows-1 && j>cols-1 && bitmap[(i+1) * cols + j+1].get_canal(V) > slow)		uf[i*cols+j].join(uf[(i+1) * cols + j+1]);
+				if (i<rows-1             && bitmap[(i+1) * cols + j  ].get_canal(V) > slow)		uf[i*cols+j].join(uf[(i+1) * cols + j  ]);
+				if (i<rows-1 && j>0      && bitmap[(i+1) * cols + j-1].get_canal(V) > slow)		uf[i*cols+j].join(uf[(i+1) * cols + j-1]);
+				if (            j>0      && bitmap[i     * cols + j-1].get_canal(V) > slow)		uf[i*cols+j].join(uf[i     * cols + j-1]);
 			}
 		}
 		
@@ -416,9 +422,7 @@ image image::close_naive(	float sHigh,
 	image vGrad 	= this->compose(vFilter);
 	image	gTone 	= assemblage(hGrad, vGrad, pixel::angleteinte);
 	
-	float high		= gTone.Hseuil(sHigh);
-	float low			= gTone.Hseuil(sLow);
-	image Border	= gTone.seuil_histerisis(high, low);
+	image Border	= gTone.seuil_histerisis(sHigh, sLow);
 	
 	image Affined	= Border.affinage(); 
 	
@@ -550,9 +554,7 @@ image image::close_waves(	float sHigh,
 	image vGrad 	= this->compose(vFilter);
 	image	gTone 	= assemblage(hGrad, vGrad, pixel::angleteinte);
 	
-	float high		= gTone.Hseuil(sHigh);
-	float low			= gTone.Hseuil(sLow);
-	image Border	= gTone.seuil_histerisis(high, low);
+	image Border	= gTone.seuil_histerisis(sHigh, sLow);
 	
 	image Affined	= Border.affinage(); 
 	

@@ -4,14 +4,16 @@
 	#include "parser.hh"
 	
 	int line = 1;
+	
 %}
 
-float           [0-9]*(\.[0-9]*)?
+float           [+-]?[0-9]*(\.[0-9]*)?
 format          P[1-6]
 word            [A-Za-z0-9\-\_+=\!\$\#\%\&\*\^\@@\\\~\.]+
 path            ((\/)?{word})+
 var             ${word}
 string          \".*\"
+comment					^[#;].*[\n] 
 
 %%
 
@@ -44,6 +46,9 @@ string          \".*\"
 {var}         { yylval.string = strdup(&(yytext[1])); return TK_VAR;      }
 {path}        { yylval.string = strdup(yytext);       return TK_PATH;     }
 {string}      { yylval.string = strdup(yytext);       return TK_STRING;   }
+
+{comment}			{ break;																										}
+
 .							{ std::cout << "[LEXER] Syntax error line : "
 													<< line
 													<< std::endl;

@@ -68,13 +68,13 @@ namespace lenactions {
 			image affinage();
 			
 			
-			image close_naive(float sHigh					= 0.95,
-												float sLow					= 0.85,
+			image close_naive(float sHigh					= -0.95,
+												float sLow					= -0.85,
 												convolution hFilter	= lenactions::convolution::SobelH(),
 												convolution vFilter	= lenactions::convolution::SobelV());
 			
-			image close_waves(float sHigh					= 0.95,
-												float sLow					= 0.85,
+			image close_waves(float sHigh					= -0.95,
+												float sLow					= -0.85,
 												convolution hFilter	= lenactions::convolution::SobelH(),
 												convolution vFilter	= lenactions::convolution::SobelV());
 			
