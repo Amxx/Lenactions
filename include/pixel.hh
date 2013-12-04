@@ -35,14 +35,14 @@ namespace lenactions {
       pixel(float g);
 			pixel(float x, float y, float z, colorSpace s = RGB);
     
-      float         get_canal(canal c);
-			float					r();
-			float					g();
-			float					b();
-			float					h();
-			float					s();
-			float					v();
-      void          set_canal(canal c, float v);
+      float&       	get_canal(canal c);
+      float&				r();
+			float&				g();
+			float&				b();
+			float&				h();
+			float&				s();
+			float&				v();
+			void          set_canal(canal c, float v);
       void          set_space(colorSpace s);
     
     	void          to_stream(std::ostream& o, format f);

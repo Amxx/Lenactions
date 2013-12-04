@@ -63,7 +63,13 @@ pixel& image::operator[] (int idx)
 	return bitmap[idx];
 }
 
-std::pair<int, int> image::dimensions() {
+const pixel& image::operator[] (int idx) const
+{
+	return bitmap[idx];
+}
+
+std::pair<int, int> image::dimensions() const
+{
   return std::make_pair(cols, rows);
 }
 
@@ -75,8 +81,7 @@ std::pair<int, int> image::dimensions() {
 void image::from_stream(std::istream& in)
 {
   int scale;
-  
-  
+    
   if(bitmap) delete[] bitmap;
   
   switch(getc(in))
@@ -141,7 +146,7 @@ void image::from_stream(std::istream& in)
 	}
 }
 
-void image::to_stream(std::ostream& out, format out_format)
+void image::to_stream(std::ostream& out, format out_format) const
 {
 	out << "P" << out_format << std::endl;
 	out << cols << " " << rows << std::endl;
@@ -169,7 +174,7 @@ void image::to_stream(std::ostream& out, format out_format)
 
 
 
-float image::Hseuil(float p)
+float image::Hseuil(float p) const
 {
 	int*	hist = new int[1024];
 	int 	seuil = 0;
@@ -194,7 +199,7 @@ float image::Hseuil(float p)
 
 
 
-image image::compose(convolution c)
+image image::compose(convolution c) const
 {
 	image composed;
 	composed.rows = 	rows;
@@ -221,7 +226,7 @@ image image::compose(convolution c)
   return composed;
 }
 
-image image::assemblage(image& a, image& b, pixelOperator op)
+image image::assemblage(const image& a, const image& b, pixelOperator op)
 {
 	if (a.cols != b.cols || a.rows != b.rows) throw;
 	
@@ -243,7 +248,7 @@ image image::assemblage(image& a, image& b, pixelOperator op)
 
 
 
-image image::seuil_global(float p)
+image image::seuil_global(float p) const
 {
 	image seuilled;
 	seuilled.rows = 	rows;
@@ -258,7 +263,7 @@ image image::seuil_global(float p)
 	return seuilled;
 }
 
-image image::seuil_local()
+image image::seuil_local() const
 {
 	float filtre[9] = { 1.f, 1.f, 1.f, 1.f, 0.f, 1.f, 1.f, 1.f, 1.f};
 	image composed = image::compose(convolution(filtre));
@@ -270,11 +275,10 @@ image image::seuil_local()
 	return composed;
 }
 
-image image::seuil_histerisis(float high, float low)
+image image::seuil_histerisis(float high, float low) const
 {
 	float shigh = (high>0)?high:Hseuil(-high);
 	float slow  = (low>0)	?low :Hseuil(-low );
-	
 	
 	Unionfind* uf = new Unionfind[rows*cols];
 	for (int i=0; i<rows; ++i)
@@ -312,7 +316,7 @@ image image::seuil_histerisis(float high, float low)
 
 
 
-image image::affinage()
+image image::affinage() const
 {
 	image affined;
 	affined.rows		=		rows;
@@ -327,44 +331,6 @@ image image::affinage()
 		for (int j=0; j<cols; j+=1)
 			if ( bitmap[i*cols+j].get_canal(V) && !viewed[i*cols+j] )
 			{
-				/*
-				float theta = 	PI * bitmap[i*cols+j].get_canal(H) / 180.;
-				int		x, y;
-				float dx		=	sin(theta);
-				float dy		=	cos(theta);
-				float tmax	=	0.;
-				float tmin	=	0.;
-				do
-				{
-					tmin--;
-					x = (int) (tmin*dx + .5 + i);
-					y = (int) (tmin*dy + .5 + j);
-				}
-				while
-				(
-						x > 0 && x < rows &&	y > 0 && y < cols
-				&&	bitmap[x*cols+y].get_canal(V)
-				&&	fmod(fabs(bitmap[i*cols+j].get_canal(H) - bitmap[x*cols+y].get_canal(H)), 360) < 90.
-				);
-				
-				do
-				{
-					tmax++;
-					x = (int) (tmax*dx + .5 + i);
-					y = (int) (tmax*dy + .5 + j);
-				}
-				while
-				(
-						x > 0 && x < rows &&	y > 0 && y < cols
-				&&	bitmap[x*cols+y].get_canal(V)
-				&&	fmod(fabs(bitmap[i*cols+j].get_canal(H) - bitmap[x*cols+y].get_canal(H)), 360) < 90.
-				);
-				
-				x = (int) (((tmax+tmin)/2.)*dx + .5 + i);
-				y = (int) (((tmax+tmin)/2.)*dy + .5 + j);
-				affined.bitmap[x*cols+y] = bitmap[x*cols+y];
-				*/
-				
 				int x, dx;
 				int y, dy;
 				int tmin, tmax;
@@ -416,7 +382,7 @@ image image::affinage()
 image image::close_naive(	float sHigh,
 													float sLow,
 													convolution hFilter,
-													convolution vFilter)
+													convolution vFilter) const
 {
 	image hGrad 	= this->compose(hFilter);
 	image vGrad 	= this->compose(vFilter);
@@ -548,7 +514,7 @@ image image::close_naive(	float sHigh,
 image image::close_waves(	float sHigh,
 													float sLow,
 													convolution hFilter,
-													convolution vFilter)
+													convolution vFilter) const
 {
 	image hGrad 	= this->compose(hFilter);
 	image vGrad 	= this->compose(vFilter);
@@ -708,6 +674,177 @@ image image::close_waves(	float sHigh,
 
 
 
+#define DEG2RAD PI/180.
+
+image image::hough_line() const
+{
+	image result;
+	result.rows = rows;
+	result.cols = cols;
+	result.bitmap = new pixel[rows*cols];
+	for (int i=0; i<rows*cols; ++i)
+		result.bitmap[i] = pixel();
+
+	float  __diag				= sqrt(rows*rows+cols*cols);
+	float  __step				= sqrt(2.)/2.;
+	
+	float  __step_theta	= 1;
+	//float  __step_theta	= 1. / (std::max(rows,cols) * DEG2RAD);
+	//printf("dTheta : %f\n", __step_theta);
+	
+	int    __offset			= __diag/__step;
+	int    __accu_h			= 2 * __diag/__step;
+	int    __accu_w			= 180./__step_theta;
+	float* __accu				= new float[__accu_h*__accu_w];
+  
+	for (int i=0; i<__accu_h*__accu_w; ++i)
+		__accu[i] = 0;
+	
+	for (int x=0; x<rows; ++x)
+		for (int y=0; y<cols; ++y)
+			if (bitmap[x*cols+y].v())
+				for(int t=0; t<__accu_w; ++t)  
+				{  
+					float r = ( 	x * cos(t * __step_theta * DEG2RAD)
+											+ y * sin(t * __step_theta * DEG2RAD)	);
+					__accu[((int) (r/__step) + __offset) * __accu_w + t]++;	// VOTE !
+				}
+		
+		int accu_max = 0;
+		for (int i=0; i<__accu_h*__accu_w; ++i)
+				if (accu_max < __accu[i])
+					accu_max = __accu[i];
+		
+		for (int i=0; i<__accu_h; ++i)  
+			for (int t=0; t<__accu_w; ++t)  
+				// if (__accu[i*__accu_w + t] >= 50)   // THRESHOLD
+				if (__accu[i*__accu_w + t] >= 0.4 * accu_max)   // THRESHOLD
+				{
+					int max = __accu[i*__accu_w + t];
+					for (int li=-4; li<=4; ++li)  
+						for (int lt=-4; lt<=4; ++lt)  
+							if (   i+li>=0 && i+li<__accu_h
+									&& t+lt>=0 && t+lt<__accu_w
+									&& __accu[(i+li)*__accu_w + t+lt] > max)  
+							{  
+								max = __accu[(i+li)*__accu_w + t+lt];  
+								li = lt = 5;  
+							}
+					
+					if (max > __accu[i*__accu_w + t]) 
+						continue;  
+    
+					float grey = __accu[i*__accu_w + t] / accu_max;
+					
+					//======================== A OPTIMISER ========================
+//					printf("Droite ! (%d, %d)\n", i-__offset, t);
+					for (int x=0; x<rows; ++x)
+						for (int y=0; y<cols; ++y)
+						{
+							float r = ( 	x * cos(t * __step_theta * DEG2RAD)
+													+ y * sin(t * __step_theta * DEG2RAD)	);
+							if ((int) (r/__step) + __offset == i)
+								if (result[x*cols+y].v() < grey)
+									result[x*cols+y].v() = grey;
+						}
+					//=============================================================
+				}
+	delete __accu;
+	return result;
+}
+
+
+float evalcircle(float value, int radius)
+{
+	return value;
+	//return value*value/(radius + 1);
+}
+
+image image::hough_circle(int radius_max) const
+{
+	image result;
+	result.rows = rows;
+	result.cols = cols;
+	result.bitmap = new pixel[rows*cols];
+	for (int i=0; i<rows*cols; ++i)
+		result.bitmap[i] = pixel();
+
+	int    __radius_max	= (radius_max == -1)?sqrt(rows*rows+cols*cols):radius_max;
+	int    __offset			= (radius_max == -1)?0:radius_max;
+	int    __accu_h			= (rows + 2*__offset)*(cols + 2*__offset);
+	int    __accu_w			= __radius_max;
+	float* __accu				= new float[__accu_h*__accu_w];
+  
+	for (int i=0; i<__accu_h*__accu_w; ++i)
+		__accu[i] = 0;
+	
+	for (int x=0; x<rows; ++x)
+		for (int y=0; y<cols; ++y)
+			if (bitmap[x*cols+y].v())
+			{
+				// int r=100;
+				for (int r=0; r<__radius_max; ++r)
+					for (int lx=-r; lx<=r; ++lx)
+					{
+						if ( x+lx+__offset < 0 || x+lx+__offset >= rows ) continue;
+						int ly = sqrt(r*r-lx*lx);
+						if (y+ly+__offset < rows)
+							__accu[((x+lx+__offset)*cols+(y+ly+__offset))*__accu_w+r]++;	// VOTE !
+						if (y-ly+__offset >= 0)
+							__accu[((x+lx+__offset)*cols+(y-ly+__offset))*__accu_w+r]++;	// VOTE !
+					}
+			}
+					
+		int accu_max = 0;
+		for (int i=0; i<__accu_h; ++i)
+			for (int r=0; r<__accu_w; ++r)
+				if (accu_max < evalcircle(__accu[i*__accu_w+r], r))
+					accu_max = evalcircle(__accu[i*__accu_w+r], r);
+		
+//		printf("MAX ACCU %d\n", accu_max);
+				
+		for (int i=0; i<rows+2*__offset; ++i)
+			for (int j=0; j<cols+2*__offset; ++j)
+				for (int r=0; r<__accu_w; ++r)  
+					// if (__accu[(i*cols+j)*__accu_w + r] >= 50)   // THRESHOLD
+					if (evalcircle(__accu[(i*cols+j)*__accu_w + r], r) >= 0.5 * accu_max)   // THRESHOLD
+					{
+						int max = evalcircle(__accu[(i*cols+j)*__accu_w + r], r);
+						for (int li=-4; li<=4; ++li)  
+							for (int lj=-4; lj<=4; ++lj)  
+								for (int lr=-4; lr<=4; ++lr)  
+									if (   i+li>=0 && i+li<rows+2*+__offset
+											&& j+lj>=0 && j+lj<cols+2*+__offset
+											&& r+lr>=0 && r+lr<__accu_w
+											&& evalcircle(__accu[((i+li)*cols+j+lj)*__accu_w+r+lr], r) > max)  
+									{  
+										max = evalcircle(__accu[((i+li)*cols+j+lj)*__accu_w+r+lr], r);  
+										li = lj = 5;  
+									}
+					
+						if (evalcircle(__accu[(i*cols+j)*__accu_w + r], r) < max) 
+							continue;  
+    
+						float grey = (float) __accu[(i*cols+j)*__accu_w+r] / accu_max;
+					
+						//======================== A OPTIMISER ========================
+//						printf("Cercle ! (%d %d) %d : count (%f)\n", i, j, r, __accu[(i*cols+j)*__accu_w+r]);
+						
+						for (float t=0; t<2*M_PI; t+=0.01)
+						{
+							int x = i + r*cos(t) - __offset;
+							int y = j + r*sin(t) - __offset;
+							if (x<0 || x>=rows || y<0 || y>=cols) continue;
+							if (result[x*cols+y].v() < grey)
+									result[x*cols+y].v() = grey;
+						}
+						
+						//=============================================================
+					}
+					
+	delete __accu;
+	return result;
+}
 
 
 
@@ -719,14 +856,39 @@ image image::close_waves(	float sHigh,
 
 
 
-int image::o_cols(int j, int offset) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int image::o_cols(int j, int offset) const
+{
   int r = j+offset;
   while (r < 0 || r >= cols)
     r = (r < 0)?(-r):(2*(cols-1)-r);
   return r;
 }
 
-int image::o_rows(int i, int offset) {
+int image::o_rows(int i, int offset) const
+{
   int r = i+offset;
   while (r < 0 || r >= rows)
     r = (r < 0)?(-r):(2*(rows-1)-r);

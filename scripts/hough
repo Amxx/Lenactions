@@ -1,0 +1,20 @@
+load $img imgs/test_image.pgm;
+export $img input.ppm;
+close_naive $img;
+
+#load $img imgs/geometry.pgm;
+#export $img input.ppm;
+#close_naive $img 0.39 0.47;
+
+export $img step1.ppm;
+
+copy $img $img2;
+
+hough_line $img;
+export $img step2_lines.ppm;
+
+hough_circle $img2 50;
+#hough_circle $img2 100;
+export $img2 step3_circles.ppm;
+
+quit;

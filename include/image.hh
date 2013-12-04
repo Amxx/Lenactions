@@ -35,11 +35,12 @@ namespace lenactions {
       ~image();		
 		
 			pixel& operator[] (int);
-			
-			void from_stream(std::istream& in);
-      void to_stream(std::ostream& out, format out_format);
+			const pixel& operator[] (int) const;
 		
-			std::pair<int,int> dimensions();
+			void from_stream(std::istream& in);
+      void to_stream(std::ostream& out, format out_format) const;
+		
+			std::pair<int,int> dimensions() const;
 		
 			
       // void histogram(std::ostream& out);
@@ -56,32 +57,34 @@ namespace lenactions {
       // void connected(int adj = 0);
       
 			
-			float Hseuil(float p);
+			float Hseuil(float p) const;
 			
-      image compose(convolution c);
-			static image assemblage(image& a, image& b, pixelOperator op);
+      image compose(convolution c) const;
+			static image assemblage(const image& a, const image& b, pixelOperator op);
 			
-			image seuil_global(float s = 0.5);
-			image seuil_local();
-			image seuil_histerisis(float high, float low);
+			image seuil_global(float s = 0.5) const;
+			image seuil_local() const;
+			image seuil_histerisis(float high, float low) const;
 			
-			image affinage();
-			
+			image affinage() const;
 			
 			image close_naive(float sHigh					= -0.95,
 												float sLow					= -0.85,
 												convolution hFilter	= lenactions::convolution::SobelH(),
-												convolution vFilter	= lenactions::convolution::SobelV());
+												convolution vFilter	= lenactions::convolution::SobelV()) const;
 			
 			image close_waves(float sHigh					= -0.95,
 												float sLow					= -0.85,
 												convolution hFilter	= lenactions::convolution::SobelH(),
-												convolution vFilter	= lenactions::convolution::SobelV());
+												convolution vFilter	= lenactions::convolution::SobelV()) const;
+			
+			image hough_line() const;
+			image hough_circle(int = -1) const;
 			
 			
     private:
-      int o_cols(int j, int offset);
-      int o_rows(int i, int offset);
+      int o_cols(int j, int offset) const;
+      int o_rows(int i, int offset) const;
 
 		
       int rows;

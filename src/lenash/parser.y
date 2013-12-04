@@ -29,12 +29,12 @@
 }
 
 
-%token      TK_SEMI
-%token<floating> TK_FLOAT
-%token<integer>  TK_FORMAT
-%token<string>  TK_VAR
-%token<string>  TK_PATH
-%token<string>  TK_STRING
+%token						TK_SEMI
+%token<floating>	TK_FLOAT
+%token<integer>		TK_FORMAT
+%token<string>		TK_VAR
+%token<string>		TK_PATH
+%token<string>		TK_STRING
 
 %token      TK_CMD_QUIT
 %token      TK_CMD_ECHO
@@ -54,8 +54,10 @@
 %token      TK_CMD_SEUILL
 %token      TK_CMD_SEUILH
 %token      TK_CMD_AFFINAGE
-%token      TK_CMD_CLOSEN
-%token      TK_CMD_CLOSEW
+%token      TK_CMD_CLOSENAIVE
+%token      TK_CMD_CLOSEWAVE
+%token			TK_CMD_HOUGHLINE
+%token			TK_CMD_HOUGHCIRCLE
 
 %start prg
 
@@ -331,7 +333,7 @@ line:
   free($2);
  }
 
-| TK_CMD_CLOSEN TK_VAR TK_SEMI
+| TK_CMD_CLOSENAIVE TK_VAR TK_SEMI
  {
   if (imgs.find($2) != imgs.end()) {
    std::cout << "contours fermés ... " << std::flush;
@@ -346,7 +348,7 @@ line:
   }
   free($2);
  }
-| TK_CMD_CLOSEN TK_VAR TK_FLOAT TK_FLOAT TK_SEMI
+| TK_CMD_CLOSENAIVE TK_VAR TK_FLOAT TK_FLOAT TK_SEMI
  {
   if (imgs.find($2) != imgs.end()) {
    std::cout << "contours fermés " << $3 << ", " << $4 << " ... " << std::flush;
@@ -361,7 +363,7 @@ line:
   }
   free($2);
  }	
-| TK_CMD_CLOSEW TK_VAR TK_SEMI
+| TK_CMD_CLOSEWAVE TK_VAR TK_SEMI
  {
   if (imgs.find($2) != imgs.end()) {
    std::cout << "contours fermés ... " << std::flush;
@@ -376,7 +378,7 @@ line:
   }
   free($2);
  }
-| TK_CMD_CLOSEW TK_VAR TK_FLOAT TK_FLOAT TK_SEMI
+| TK_CMD_CLOSEWAVE TK_VAR TK_FLOAT TK_FLOAT TK_SEMI
  {
   if (imgs.find($2) != imgs.end()) {
    std::cout << "contours fermés " << $3 << ", " << $4 << " ... " << std::flush;
@@ -391,6 +393,51 @@ line:
   }
   free($2);
  }	
+| TK_CMD_HOUGHLINE TK_VAR TK_SEMI
+ {
+  if (imgs.find($2) != imgs.end()) {
+   std::cout << "hough line ... " << std::flush;
+   
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->hough_line());
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
+   std::cout << "done" << std::endl;
+  } else {  
+   std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
+  }
+  free($2);
+ }
+| TK_CMD_HOUGHCIRCLE TK_VAR TK_SEMI
+ {
+  if (imgs.find($2) != imgs.end()) {
+   std::cout << "hough circle ... " << std::flush;
+   
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->hough_circle(-1));
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
+   std::cout << "done" << std::endl;
+  } else {  
+   std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
+  }
+  free($2);
+ }
+| TK_CMD_HOUGHCIRCLE TK_VAR TK_FLOAT TK_SEMI
+ {
+  if (imgs.find($2) != imgs.end()) {
+   std::cout << "hough circle ... " << std::flush;
+   
+			lenactions::image* tmp = new lenactions::image(imgs[$2]->hough_circle((int) $3));
+			delete imgs[$2];
+			imgs[$2] = tmp;
+			
+   std::cout << "done" << std::endl;
+  } else {  
+   std::cerr << "[Error] Unknown picture: " << $2 << std::endl;
+  }
+  free($2);
+ }
 ;
 
 

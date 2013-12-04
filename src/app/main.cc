@@ -16,7 +16,6 @@ int main(int argc, char* argv[])
   
   lenactions::image img;
   
-  
   std::ifstream in;
   std::ofstream out;
   
@@ -26,9 +25,17 @@ int main(int argc, char* argv[])
   in.close();
   
 	
-  
+  lenactions::image closed(img.close_naive());
+  // lenactions::image closed(img.close_naive(100./255., 120./255.));
+	
 	out.open("/dev/shm/5_final.ppm");		
-	img.close_naive().to_stream(out, lenactions::P6);
+	closed.to_stream(out, lenactions::P6);
+	out.close();
+	out.open("/dev/shm/6line.ppm");		
+	closed.hough_line().to_stream(out, lenactions::P6);
+	out.close();
+	out.open("/dev/shm/6circle.ppm");		
+	closed.hough_circle(50).to_stream(out, lenactions::P6);
 	out.close();
 	
   return 0;

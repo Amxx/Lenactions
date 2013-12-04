@@ -1,0 +1,15 @@
+load $img imgs/pdc.ppm;
+
+# sobel $img;
+# seuil_H $img -0.95 -0.85;
+# affinage $img;
+
+#close_wave $img -0.96 -0.92;
+close_naive $img 0.39 0.47;
+export $img export.ppm;
+
+hough_circle $img 400;
+export $img export_circle.ppm;
+
+
+quit;

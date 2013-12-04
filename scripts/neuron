@@ -4,7 +4,7 @@ load $img imgs/neuron.ppm;
 # seuil_H $img 0.25 0.05;
 # affinage $img;
 
-close_W $img 0.25 0.05;
+close_wave $img 0.25 0.05;
 
 export $img export.ppm;
 quit;

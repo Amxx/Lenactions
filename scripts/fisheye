@@ -1,6 +1,6 @@
 load $img imgs/fisheye.ppm;
 
-close_W $img -0.95 -0.90;
+close_wave $img -0.95 -0.90;
 
 export $img export.ppm;
 quit;

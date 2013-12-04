@@ -61,7 +61,7 @@ pixel::pixel(float x, float y, float z, colorSpace s)
  * ____________________________________ Access ____________________________________
  */
 
-float pixel::get_canal(canal c) 
+float& pixel::get_canal(canal c) 
 {
   switch (c)
   {
@@ -76,20 +76,18 @@ float pixel::get_canal(canal c)
       set_space(HSV);
       return value[c - 3];
     case GREY:
-      if (space == HSV)
-        return value[0];
-      else
-        return MAX3(value[0], value[1], value[2]);
+      set_space(HSV);
+			return value[2];
   }
   throw;
 }
 
-float pixel::r() { return get_canal(R); }
-float pixel::g() { return get_canal(G); }
-float pixel::b() { return get_canal(B); }
-float pixel::h() { return get_canal(H); }
-float pixel::s() { return get_canal(S); }
-float pixel::v() { return get_canal(V); }
+float& pixel::r() { return get_canal(R); }
+float& pixel::g() { return get_canal(G); }
+float& pixel::b() { return get_canal(B); }
+float& pixel::h() { return get_canal(H); }
+float& pixel::s() { return get_canal(S); }
+float& pixel::v() { return get_canal(V); }
 
 void pixel::set_canal(canal c, float v)
 {
